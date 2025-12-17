@@ -43,5 +43,8 @@ void Area::Draw()
 
 void Area::Release()
 {
-	Model::Release(hModels_.size());
+	for (int i = 0; i < hModels_.size(); i++)
+	{
+		Model::Release(hModels_[i]);
+	}
 }

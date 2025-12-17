@@ -87,6 +87,23 @@ void Player::Update()
 	//	KillMe();
 	//}
 
+	Stage* stage = (Stage*)FindObject("Stage");    //ステージオブジェクトを探す
+	int hStageModel = stage->GetModelHandle();    //モデル番号を取得
+
+	RayCastData data;
+	data.start = transform_.position_;   //レイの発射位置
+	data.start.y = 0;
+
+	data.dir = XMFLOAT3(0, -1, 0);       //レイの方向
+	Model::RayCast(hStageModel, &data); //レイを発射
+
+	//レイが当たったら
+	if (data.hit)
+	{
+		//その分位置を下げる
+		transform_.position_.y = -data.dist;
+	}
+
 	XMVECTOR vCam = { 0,2.0f,-7.0f,0 };
 	XMFLOAT3 camPos;
 	vCam = XMVector3TransformCoord(vCam, mRotate);

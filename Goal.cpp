@@ -59,5 +59,8 @@ void Goal::Draw()
 
 void Goal::Release()
 {
-	Model::Release(hModels_.size());
+	for (int i = 0; i < hModels_.size(); i++)
+	{
+		Model::Release(hModels_[i]);
+	}
 }
