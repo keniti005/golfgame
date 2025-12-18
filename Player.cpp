@@ -91,8 +91,9 @@ void Player::Update()
 	int hStageModel = stage->GetModelHandle();    //モデル番号を取得
 
 	RayCastData data;
+	float rayStart = 10.0f;
 	data.start = transform_.position_;   //レイの発射位置
-	data.start.y = 0;
+	data.start.y = rayStart;
 
 	data.dir = XMFLOAT3(0, -1, 0);       //レイの方向
 	Model::RayCast(hStageModel, &data); //レイを発射
@@ -101,7 +102,7 @@ void Player::Update()
 	if (data.hit)
 	{
 		//その分位置を下げる
-		transform_.position_.y = -data.dist;
+		transform_.position_.y = -data.dist + data.start.y;
 	}
 
 	XMVECTOR vCam = { 0,2.0f,-7.0f,0 };
