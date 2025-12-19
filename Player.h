@@ -1,9 +1,6 @@
 #pragma once
 #include "Engine/GameObject.h"
 
-class Fbx;
-class ChildOden;
-
 class Player :
     public GameObject
 {
@@ -15,9 +12,9 @@ public:
     void Draw() override;
     void Release() override;
 private:
-    Fbx* pFbx_;
-    ChildOden* pRChildOden_;
-    ChildOden* pLChildOden_;
     int hModel_;
+    float mass_;
+    float force_;
+    float friction_;
 };
 

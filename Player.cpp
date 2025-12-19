@@ -7,7 +7,7 @@
 #include "Engine/CsvReader.h"
 
 Player::Player(GameObject* parent)
-	:GameObject(parent,"Player"),pFbx_(nullptr)
+	:GameObject(parent,"Player"), mass_(0.5f), force_(0.0f), friction_(-0.02f)
 {
 }
 
@@ -45,12 +45,63 @@ void Player::Initialize()
 void Player::Update()
 {
 	XMVECTOR vPos = XMLoadFloat3(&transform_.position_);
+	//static float pt = timeGetTime();
+	//float ct = timeGetTime();
+	//float dt = (ct - pt) / 1000.0f;
+	//pt = ct;
+
+	float pPos = 0.0f;
+	float velocity = 3.0f;
+	const float MAX_SPEED = 3.0f;
+	//float mass = 0.5f;
+	//float force = 0.0f;
+	//float friction = -0.04f;
+
+	if (Input::IsKeyDown(DIK_SPACE))
+	{
+		force_ += velocity * mass_;
+	}
+
+	if (force_ > 0)
+	{
+		force_ += friction_;
+	}
+	else
+	{
+		force_ = 0.0f;
+	}
+
+	//if (Input::IsKey(DIK_W))
+	//{
+	//	velocity_ += 0.04f;
+	//}
+	//else
+	//{
+	//	if (velocity_ > 0)
+	//	{
+	//		velocity_ += friction;
+	//	}
+	//	else
+	//	{
+	//		velocity_ = 0.0f;
+	//	}
+	//}
+
+	if (force_ > MAX_SPEED)
+	{
+		force_ = MAX_SPEED;
+	}
+	pPos += force_;
 
 	XMVECTOR vMoveY = XMVectorSet(0, 0.2f, 0, 0);
-	XMVECTOR vMoveZ = XMVectorSet(0, 0, 0.2f, 0);
+	XMVECTOR vMoveZ = XMVectorSet(0, 0, pPos, 0);
 
 	XMMATRIX mRotate = XMMatrixRotationY(XMConvertToRadians(transform_.rotate_.y));
 	vMoveZ = XMVector3TransformCoord(vMoveZ,mRotate);
+	OutputDebugStringA((std::to_string(force_) + "\n").c_str());
+
+	vPos += vMoveZ;
+	XMStoreFloat3(&transform_.position_, vPos);
 
 #if true //デバッグ用
 	if (Input::IsKey(DIK_UP))
@@ -71,16 +122,16 @@ void Player::Update()
 	{
 		transform_.rotate_.y -= 1.2f;
 	}
-	if (Input::IsKey(DIK_W))
-	{
-		vPos += vMoveZ;
-		XMStoreFloat3(&transform_.position_, vPos);
-	}
-	if (Input::IsKey(DIK_S))
-	{
-		vPos -= vMoveZ;
-		XMStoreFloat3(&transform_.position_, vPos);
-	}
+	//if (Input::IsKey(DIK_W))
+	//{
+	//	vPos += vMoveZ;
+	//	XMStoreFloat3(&transform_.position_, vPos);
+	//}
+	//if (Input::IsKey(DIK_S))
+	//{
+	//	vPos -= vMoveZ;
+	//	XMStoreFloat3(&transform_.position_, vPos);
+	//}
 # endif
 	//if (transform_.rotate_.y >= 720.0f)
 	//{
