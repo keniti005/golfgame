@@ -13,8 +13,9 @@ public:
     void Release() override;
 private:
     int hModel_;
-    float mass_;
-    float force_;
-    float friction_;
+    float mass_;//¿—Ê
+    float force_;//—Í
+    float friction_;//–€C
+    bool isRool_;//ƒ{[ƒ‹‚ª“]‚ª‚Á‚Ä‚¢‚é‚©‚¢‚È‚¢‚©
 };
 

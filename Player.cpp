@@ -7,7 +7,7 @@
 #include "Engine/CsvReader.h"
 
 Player::Player(GameObject* parent)
-	:GameObject(parent,"Player"), mass_(0.5f), force_(0.0f), friction_(-0.02f)
+	:GameObject(parent,"Player"), mass_(0.5f), force_(0.0f), friction_(-0.02f),isRool_(false)
 {
 }
 
@@ -49,17 +49,16 @@ void Player::Update()
 	//float ct = timeGetTime();
 	//float dt = (ct - pt) / 1000.0f;
 	//pt = ct;
-
-	float pPos = 0.0f;
 	float velocity = 3.0f;
 	const float MAX_SPEED = 3.0f;
-	//float mass = 0.5f;
-	//float force = 0.0f;
-	//float friction = -0.04f;
 
-	if (Input::IsKeyDown(DIK_SPACE))
+	if (!(isRool_))
 	{
-		force_ += velocity * mass_;
+		if (Input::IsKeyDown(DIK_SPACE))
+		{
+			force_ += velocity * mass_;
+			isRool_ = true;
+		}
 	}
 
 	if (force_ > 0)
@@ -69,32 +68,16 @@ void Player::Update()
 	else
 	{
 		force_ = 0.0f;
+		isRool_ = false;
 	}
-
-	//if (Input::IsKey(DIK_W))
-	//{
-	//	velocity_ += 0.04f;
-	//}
-	//else
-	//{
-	//	if (velocity_ > 0)
-	//	{
-	//		velocity_ += friction;
-	//	}
-	//	else
-	//	{
-	//		velocity_ = 0.0f;
-	//	}
-	//}
 
 	if (force_ > MAX_SPEED)
 	{
 		force_ = MAX_SPEED;
 	}
-	pPos += force_;
 
 	XMVECTOR vMoveY = XMVectorSet(0, 0.2f, 0, 0);
-	XMVECTOR vMoveZ = XMVectorSet(0, 0, pPos, 0);
+	XMVECTOR vMoveZ = XMVectorSet(0, 0, force_, 0);
 
 	XMMATRIX mRotate = XMMatrixRotationY(XMConvertToRadians(transform_.rotate_.y));
 	vMoveZ = XMVector3TransformCoord(vMoveZ,mRotate);
