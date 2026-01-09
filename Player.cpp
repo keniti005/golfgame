@@ -7,7 +7,8 @@
 #include "Engine/CsvReader.h"
 
 Player::Player(GameObject* parent)
-	:GameObject(parent,"Player"), mass_(0.5f), force_(0.0f), friction_(-0.02f),isRool_(false)
+	:GameObject(parent, "Player"), mass_(0.5f), force_(0.0f), friction_(-0.6f), gravity_(-0.98f), isRool_(false)
+	, velocity{ 3.0f,1.0f,3.0f },vy(0.0f)
 {
 }
 
@@ -44,26 +45,36 @@ void Player::Initialize()
 
 void Player::Update()
 {
+	if (Input::IsKey(DIK_D))
+	{
+		transform_.rotate_.y += 1.2f;
+	}
+	if (Input::IsKey(DIK_A))
+	{
+		transform_.rotate_.y -= 1.2f;
+	}
+
 	XMVECTOR vPos = XMLoadFloat3(&transform_.position_);
-	//static float pt = timeGetTime();
-	//float ct = timeGetTime();
-	//float dt = (ct - pt) / 1000.0f;
-	//pt = ct;
-	float velocity = 3.0f;
+#if true
+	static float pt = timeGetTime();
+	float ct = timeGetTime();
+	float dt = (ct - pt) / 1000.0f;
+	
 	const float MAX_SPEED = 3.0f;
+	//float v = 0.0f;
 
 	if (!(isRool_))
 	{
 		if (Input::IsKeyDown(DIK_SPACE))
 		{
-			force_ += velocity * mass_;
+			force_ += velocity.z * mass_;//運動方程式
 			isRool_ = true;
 		}
 	}
 
 	if (force_ > 0)
 	{
-		force_ += friction_;
+		force_ += friction_ * dt;
 	}
 	else
 	{
@@ -76,17 +87,45 @@ void Player::Update()
 		force_ = MAX_SPEED;
 	}
 
-	XMVECTOR vMoveY = XMVectorSet(0, 0.2f, 0, 0);
+	if (Input::IsKeyDown(DIK_UP))
+	{
+		vy += velocity.y * sinf(45.0f);
+	}
+
+	if (vy > 0.0f)
+	{
+		vy += gravity_ * dt;
+	}
+
+	pt = ct;
+
+
+	XMVECTOR vMoveY = XMVectorSet(0, vy, 0, 0);
 	XMVECTOR vMoveZ = XMVectorSet(0, 0, force_, 0);
 
 	XMMATRIX mRotate = XMMatrixRotationY(XMConvertToRadians(transform_.rotate_.y));
 	vMoveZ = XMVector3TransformCoord(vMoveZ,mRotate);
-	OutputDebugStringA((std::to_string(force_) + "\n").c_str());
+	OutputDebugStringA(("force_:" + std::to_string(force_) + "\n").c_str());
+	OutputDebugStringA(("vy:" + std::to_string(vy) + "\n").c_str());
+	OutputDebugStringA(("position_.y:" + std::to_string(transform_.position_.y) + "\n").c_str());
 
+
+	vPos += vMoveY;
 	vPos += vMoveZ;
 	XMStoreFloat3(&transform_.position_, vPos);
+	if (transform_.position_.y < 0.0f)
+	{
+		transform_.position_.y = 0.0f;
+	}
 
-#if true //デバッグ用
+#else//デバッグ用
+	XMVECTOR vMoveY = XMVectorSet(0, 0.2f, 0, 0);
+	XMVECTOR vMoveZ = XMVectorSet(0, 0, 0.2f, 0);
+
+	XMMATRIX mRotate = XMMatrixRotationY(XMConvertToRadians(transform_.rotate_.y));
+	vMoveZ = XMVector3TransformCoord(vMoveZ, mRotate);
+
+	XMStoreFloat3(&transform_.position_, vPos);
 	if (Input::IsKey(DIK_UP))
 	{
 		vPos += vMoveY;
@@ -136,7 +175,7 @@ void Player::Update()
 	if (data.hit)
 	{
 		//その分位置を下げる
-		transform_.position_.y = -data.dist + data.start.y;
+		transform_.position_.y = -data.dist + data.start.y; 
 	}
 
 	XMVECTOR vCam = { 0,2.0f,-7.0f,0 };
