@@ -1,6 +1,7 @@
 #include "Tree.h"
 #include "Engine/Model.h"
 #include "Engine/CsvReader.h"
+#include "Engine/BoxCollider.h"
 
 Tree::Tree(GameObject* parent)
 	:GameObject(parent,"Tree")
@@ -18,6 +19,8 @@ void Tree::Initialize()
 	transform_.scale_.z = 3.0f;
 	hModel_ = Model::Load("tree.fbx");
 	assert(hModel_ > 0);
+	BoxCollider* collicion = new BoxCollider(XMFLOAT3(0.0f, 0.0f, 0.0f), XMFLOAT3(2.0f, 2.0f, 2.0f));
+	AddCollider(collicion);
 }
 
 void Tree::Update()
@@ -40,6 +43,7 @@ void Tree::Draw()
 				transform_.position_.z = -(10.0f * y);
 				Model::SetTransform(hModel_, transform_);
 				Model::Draw(hModel_);
+				CollisionDraw();
 			}
 		}
 	}
@@ -49,4 +53,8 @@ void Tree::Draw()
 void Tree::Release()
 {
 	Model::Release(hModel_);
+}
+
+void Tree::OnCollision(GameObject* pTarget)
+{
 }

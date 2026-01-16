@@ -5,6 +5,7 @@
 #include "Engine/Input.h"
 #include "Engine/Camera.h"
 #include "Engine/CsvReader.h"
+#include "Engine/SphereCollider.h"
 
 Player::Player(GameObject* parent)
 	:GameObject(parent, "Player"), mass_(0.5f), force_(0.0f), friction_(-0.6f), gravity_(-0.98f)
@@ -41,6 +42,9 @@ void Player::Initialize()
 			}
 		}
 	}
+
+	SphereCollider* collicion = new SphereCollider(XMFLOAT3(0.0f,transform_.scale_.y / 2.0f,0.0f),1.5f);
+	AddCollider(collicion);
 }
 
 void Player::Update()
@@ -55,7 +59,7 @@ void Player::Update()
 	}
 
 	XMVECTOR vPos = XMLoadFloat3(&transform_.position_);
-#if true
+#if false
 	static float pt = timeGetTime();
 	float ct = timeGetTime();
 	float dt = (ct - pt) / 1000.0f;
@@ -200,9 +204,19 @@ void Player::Draw()
 {
 	Model::SetTransform(hModel_, transform_);
 	Model::Draw(hModel_);
+	CollisionDraw();
 }
 
 void Player::Release()
 {
 	Model::Release(hModel_);
+}
+
+void Player::OnCollision(GameObject* pTarget)
+{
+	if (pTarget->GetObjectName() == "Tree")
+	{
+		int i = 0;
+		i++;
+	}
 }
