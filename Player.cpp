@@ -8,8 +8,8 @@
 #include "Engine/SphereCollider.h"
 
 Player::Player(GameObject* parent)
-	:GameObject(parent, "Player"), mass_(0.5f), force_(0.0f), friction_(-0.6f), gravity_(-0.98f)
-	, velocity{ 1.0f,1.0f,3.0f }, vy(0.0f), isRool_(false), isFly_(false)
+	:GameObject(parent, "Player"), mass_(0.5f), force_(0.0f), friction_(-1.0f), gravity_(-5.8f)
+	, velocity{ 0.5f,3.0f,3.0f }, vy(0.0f), isRool_(false), isFly_(false)
 {
 }
 
@@ -59,7 +59,7 @@ void Player::Update()
 	}
 
 	XMVECTOR vPos = XMLoadFloat3(&transform_.position_);
-#if false
+#if true
 	static float pt = timeGetTime();
 	float ct = timeGetTime();
 	float dt = (ct - pt) / 1000.0f;
@@ -98,15 +98,9 @@ void Player::Update()
 	{
 		if (Input::IsKeyDown(DIK_UP))
 		{
-			vy = 0.0f;
-			vy = velocity.y * sinf(45.0f);//斜方投射
+			vy = velocity.y * sinf(45.0f) + gravity_ * dt;//斜方投射
 			isFly_ = true;
 		}
-	}
-
-	if (vy >= 0.0f)
-	{
-		vy += gravity_ * dt;
 	}
 
 	pt = ct;
@@ -148,8 +142,13 @@ void Player::Update()
 
 	if (transform_.position_.y <= t.position_.y)
 	{
+		vy = 0.0f;
 		transform_.position_.y = t.position_.y;
 		isFly_ = false;
+	}
+	else
+	{
+		vy += gravity_ * dt;
 	}
 
 #else//デバッグ用
