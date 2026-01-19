@@ -9,7 +9,7 @@
 
 Player::Player(GameObject* parent)
 	:GameObject(parent, "Player"), mass_(0.5f), force_(0.0f), friction_(-1.0f), gravity_(-5.8f)
-	, velocity{ 0.5f,3.0f,3.0f }, vy(0.0f), isRool_(false), isFly_(false)
+	, velocity{ 0.5f,3.0f,3.0f }, vy(0.0f), isShoot_(false), isFly_(false)
 {
 }
 
@@ -65,41 +65,35 @@ void Player::Update()
 	float dt = (ct - pt) / 1000.0f;
 	
 	const float MAX_SPEED = 3.0f;
-	//float v = 0.0f;
 
-	if (!(isRool_))
+	if (!(isShoot_))
 	{
 		if (Input::IsKeyDown(DIK_SPACE))
 		{
 			force_ = velocity.z * mass_;//‰^“®•û’öŽ®
-			isRool_ = true;
-		}
-	}
-
-	if (!(isFly_))
-	{
-		if (force_ > 0)
-		{
-			force_ += friction_ * dt;
-		}
-		else
-		{
-			force_ = 0.0f;
-			isRool_ = false;
-		}
-	}
-
-	if (force_ > MAX_SPEED)
-	{
-		force_ = MAX_SPEED;
-	}
-
-	if (!(isFly_))
-	{
-		if (Input::IsKeyDown(DIK_UP))
-		{
 			vy = velocity.y * sinf(45.0f) + gravity_ * dt;//ŽÎ•û“ŠŽË
 			isFly_ = true;
+			isShoot_ = true;
+		}
+	}
+	else
+	{
+		if (!(isFly_))
+		{
+			if (force_ > 0)
+			{
+				force_ += friction_ * dt;
+			}
+			else
+			{
+				force_ = 0.0f;
+				isShoot_ = false;
+			}
+		}
+
+		if (force_ > MAX_SPEED)
+		{
+			force_ = MAX_SPEED;
 		}
 	}
 

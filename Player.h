@@ -27,9 +27,8 @@ private:
     float friction_;//摩擦
     float gravity_;//重力
     float vy;//仮の変数
-    bool isShoot_;
+    bool isShoot_;//ボールを打ったかどうか
     bool isFly_;//ボールが上に飛んでいないか
-
-    bool isRool_;//ボールが転がっているかいないか
+    //bool isRool_;//ボールが転がっているかいないか
 };
 
