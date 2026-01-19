@@ -1,6 +1,7 @@
 #include "Player.h"
 #include "Engine/Fbx.h"
 #include "Stage.h"
+#include "Tree.h"
 #include "Engine/Model.h"
 #include "Engine/Input.h"
 #include "Engine/Camera.h"
@@ -59,7 +60,7 @@ void Player::Update()
 	}
 
 	XMVECTOR vPos = XMLoadFloat3(&transform_.position_);
-#if true
+#if false
 	static float pt = timeGetTime();
 	float ct = timeGetTime();
 	float dt = (ct - pt) / 1000.0f;
