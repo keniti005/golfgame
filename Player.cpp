@@ -1,6 +1,7 @@
 #include "Player.h"
 #include "Engine/Fbx.h"
 #include "Stage.h"
+#include "Area.h"
 #include "Engine/Model.h"
 #include "Engine/Input.h"
 #include "Engine/Camera.h"
@@ -8,8 +9,8 @@
 #include "Engine/SphereCollider.h"
 
 Player::Player(GameObject* parent)
-	:GameObject(parent, "Player"), mass_(0.5f), force_(0.0f), friction_(-1.0f), gravity_(-5.8f)
-	, velocity{ 0.5f,3.0f,3.0f }, vy(0.0f), isShoot_(false), isFly_(false)
+	:GameObject(parent, "Player"), mass_(0.5f), force_(0.0f), friction_(-1.1f), gravity_(-5.8f)
+	, velocity{ 0.0f,0.0f,0.0f }, vy(0.0f), isShoot_(false), isFly_(false),club_(IRONCLUB)
 {
 }
 
@@ -63,40 +64,117 @@ void Player::Update()
 	static float pt = timeGetTime();
 	float ct = timeGetTime();
 	float dt = (ct - pt) / 1000.0f;
-	
 	const float MAX_SPEED = 3.0f;
+	ChangeClub();
 
-	if (!(isShoot_))
+	switch (club_)
 	{
-		if (Input::IsKeyDown(DIK_SPACE))
+	case IRONCLUB:
+		velocity.y = 2.0f;
+		velocity.z = 3.0f;
+		if (!(isShoot_))
 		{
-			force_ = velocity.z * mass_;//‰^“®•û’öŽ®
-			vy = velocity.y * sinf(45.0f) + gravity_ * dt;//ŽÎ•û“ŠŽË
-			isFly_ = true;
-			isShoot_ = true;
-		}
-	}
-	else
-	{
-		if (!(isFly_))
-		{
-			if (force_ > 0)
+			if (Input::IsKeyDown(DIK_SPACE))
 			{
-				force_ += friction_ * dt;
-			}
-			else
-			{
-				force_ = 0.0f;
-				isShoot_ = false;
+				force_ = velocity.z * mass_;//‰^“®•û’öŽ®
+				vy = velocity.y * sinf(45.0f) + gravity_ * dt;//ŽÎ•û“ŠŽË
+				isFly_ = true;
+				isShoot_ = true;
 			}
 		}
-
-		if (force_ > MAX_SPEED)
+		else
 		{
-			force_ = MAX_SPEED;
-		}
-	}
+			if (!(isFly_))
+			{
+				if (force_ > 0)
+				{
+					force_ += friction_ * dt;
+				}
+				else
+				{
+					force_ = 0.0f;
+					isShoot_ = false;
+				}
+			}
 
+			if (force_ > MAX_SPEED)
+			{
+				force_ = MAX_SPEED;
+			}
+		}
+		break;
+	case WOODENCLUB:
+		velocity.y = 3.5f;
+		velocity.z = 1.5f;
+		if (!(isShoot_))
+		{
+			if (Input::IsKeyDown(DIK_SPACE))
+			{
+				force_ = velocity.z * mass_;//‰^“®•û’öŽ®
+				vy = velocity.y * sinf(45.0f) + gravity_ * dt;//ŽÎ•û“ŠŽË
+				isFly_ = true;
+				isShoot_ = true;
+			}
+		}
+		else
+		{
+			if (!(isFly_))
+			{
+				if (force_ > 0)
+				{
+					force_ += friction_ * dt;
+				}
+				else
+				{
+					force_ = 0.0f;
+					isShoot_ = false;
+				}
+			}
+
+			if (force_ > MAX_SPEED)
+			{
+				force_ = MAX_SPEED;
+			}
+		}
+		break;
+	case SMALLCLUB:
+		velocity.y = 0.0f;
+		velocity.z = 3.5f;
+		if (!(isShoot_))
+		{
+			if (Input::IsKeyDown(DIK_SPACE))
+			{
+				force_ = velocity.z * mass_;//‰^“®•û’öŽ®
+				vy = velocity.y * sinf(45.0f) + gravity_ * dt;//ŽÎ•û“ŠŽË
+				isFly_ = true;
+				isShoot_ = true;
+			}
+		}
+		else
+		{
+			if (!(isFly_))
+			{
+				if (force_ > 0)
+				{
+					force_ += friction_ * dt;
+				}
+				else
+				{
+					force_ = 0.0f;
+					isShoot_ = false;
+				}
+			}
+
+			if (force_ > MAX_SPEED)
+			{
+				force_ = MAX_SPEED;
+			}
+		}
+
+		break;
+	default:
+		break;
+	}
 	pt = ct;
 
 
@@ -146,8 +224,8 @@ void Player::Update()
 	}
 
 #else//ƒfƒoƒbƒO—p
-	XMVECTOR vMoveY = XMVectorSet(0, 0.2f, 0, 0);
-	XMVECTOR vMoveZ = XMVectorSet(0, 0, 0.2f, 0);
+	XMVECTOR vMoveY = XMVectorSet(0, 0.4f, 0, 0);
+	XMVECTOR vMoveZ = XMVectorSet(0, 0, 0.4f, 0);
 
 	XMMATRIX mRotate = XMMatrixRotationY(XMConvertToRadians(transform_.rotate_.y));
 	vMoveZ = XMVector3TransformCoord(vMoveZ, mRotate);
@@ -211,5 +289,50 @@ void Player::OnCollision(GameObject* pTarget)
 	{
 		int i = 0;
 		i++;
+	}
+	if (pTarget->GetObjectName() == "Area")
+	{
+		int i = 0;
+		i++;
+	}
+}
+
+void Player::ChangeClub()
+{
+	if (Input::IsKeyUp(DIK_UP))
+	{
+		switch (club_)
+		{
+		case IRONCLUB:
+			club_ = WOODENCLUB;
+			break;
+		case WOODENCLUB:
+			club_ = SMALLCLUB;
+			break;
+		case SMALLCLUB:
+			club_ = IRONCLUB;
+			break;
+		default:
+			club_ = IRONCLUB;
+			break;
+		}
+	}
+	if (Input::IsKeyDown(DIK_DOWN))
+	{
+		switch (club_)
+		{
+		case IRONCLUB:
+			club_ = SMALLCLUB;
+			break;
+		case WOODENCLUB:
+			club_ = IRONCLUB;
+			break;
+		case SMALLCLUB:
+			club_ = WOODENCLUB;
+			break;
+		default:
+			club_ = IRONCLUB;
+			break;
+		}
 	}
 }

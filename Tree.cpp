@@ -43,7 +43,7 @@ void Tree::Draw()
 				transform_.position_.z = -(10.0f * y);
 				Model::SetTransform(hModel_, transform_);
 				Model::Draw(hModel_);
-				CollisionDraw();
+				//CollisionDraw();
 			}
 		}
 	}

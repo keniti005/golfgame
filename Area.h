@@ -12,6 +12,7 @@ public:
 	void Update() override;
 	void Draw() override;
 	void Release() override;
+	std::vector<int> GetModelHandles() { return hModels_; }
 private:
 	std::vector<int> hModels_;
 };

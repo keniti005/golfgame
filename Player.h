@@ -8,6 +8,13 @@ struct MyStruct
     float z;
 };
 
+enum CLUB
+{
+    IRONCLUB = 0,
+    WOODENCLUB,
+    SMALLCLUB,
+};
+
 class Player :
     public GameObject
 {
@@ -20,8 +27,10 @@ public:
     void Release() override;
     void OnCollision(GameObject* pTarget) override;
 private:
+    void ChangeClub();
     int hModel_;
     MyStruct velocity;
+    CLUB club_;
     float mass_;//Ž¿—Ê
     float force_;//—Í
     float friction_;//–€ŽC
