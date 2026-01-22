@@ -29,13 +29,9 @@ void Tree::Update()
 
 void Tree::Draw()
 {
-	CsvReader csv;
-	csv.Load("Stage00.csv");
-	int w = csv.GetWidth();
-	int h = csv.GetHeight();
-	for (int y = 0; y < h; y++)
+	for (int y = 0;)
 	{
-		for (int x = 0; x < w; x++)
+		for (int x = 0;)
 		{
 			if (csv.GetValue(x, y) == 1)
 			{

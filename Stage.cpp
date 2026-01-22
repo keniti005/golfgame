@@ -33,7 +33,21 @@ void Stage::Initialize()
 	//transform_.position_.y = -2.0f;
 	hModel_ = Model::Load("ground.fbx");
 	assert(hModel_ > 0);
-	Instantiate<Tree>(this);
+	CsvReader csv;
+	csv.Load("Stage00.csv");
+	int w = csv.GetWidth();
+	int h = csv.GetHeight();
+	for (int y = 0; y < h; y++)
+	{
+		for (int x = 0; x < w; x++)
+		{
+			if (csv.GetValue(x, y) == 1)
+			{
+				Instantiate<Tree>(this);
+			}
+		}
+	}
+
 	Instantiate<Area>(this);
 	Instantiate<Goal>(this);
 }
