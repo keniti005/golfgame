@@ -13,7 +13,6 @@ public:
     void Draw() override;
     void Release() override;
     int GetModelHandle() { return hModel_; }
-    int GetCsvValue(int x, int y) { return x, y; }
 private:
     //std::vector<int> hModels_;
     int hModel_;

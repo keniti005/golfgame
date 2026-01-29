@@ -43,7 +43,10 @@ void Stage::Initialize()
 		{
 			if (csv.GetValue(x, y) == 1)
 			{
-				Instantiate<Tree>(this);
+				Tree* tree = Instantiate<Tree>(this);
+				int tposX = (10.0f * x + tree->GetScale().x);
+				int tposZ = -(10.0f * y + tree->GetScale().z);
+				tree->SetPosition(tposX, 0.0f, tposZ);
 			}
 		}
 	}

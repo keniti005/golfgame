@@ -1,12 +1,6 @@
 #pragma once
 #include "Engine/GameObject.h"
 
-//struct obj
-//{
-//	std::vector<std::vector<int>> pos;
-//
-//};
-
 class Tree :
 	public GameObject
 {

@@ -2,6 +2,7 @@
 #include "Engine/Fbx.h"
 #include "Stage.h"
 #include "Area.h"
+#include "Tree.h"
 #include "Engine/Model.h"
 #include "Engine/Input.h"
 #include "Engine/Camera.h"
@@ -290,7 +291,7 @@ void Player::OnCollision(GameObject* pTarget)
 		int i = 0;
 		i++;
 	}
-	if (pTarget->GetObjectName() == "Area")
+	if (pTarget->GetObjectName() == "Tree")
 	{
 		int i = 0;
 		i++;
