@@ -7,7 +7,7 @@
 #include <string>
 
 Stage::Stage(GameObject* parent)
-	:GameObject(parent,"Stage")
+	:GameObject(parent,"Stage"),hModel_(-1)
 {
 }
 
@@ -32,7 +32,7 @@ void Stage::Initialize()
 	//}
 	//transform_.position_.y = -2.0f;
 	hModel_ = Model::Load("ground.fbx");
-	assert(hModel_ > 0);
+	assert(hModel_ >= 0);
 	CsvReader csv;
 	csv.Load("Stage00.csv");
 	int w = csv.GetWidth();
@@ -48,11 +48,17 @@ void Stage::Initialize()
 				int tposZ = -(10.0f * y + tree->GetScale().z);
 				tree->SetPosition(tposX, 0.0f, tposZ);
 			}
+			else if (csv.GetValue(x, y) == 10)
+			{
+				Goal* goal = Instantiate<Goal>(this);
+				int gposX = (10.0f * x + goal->GetScale().x);
+				int gposZ = -(10.0f * y + goal->GetScale().z);
+				goal->SetPosition(gposX, 0.0f, gposZ);
+			}
 		}
 	}
 
 	Instantiate<Area>(this);
-	Instantiate<Goal>(this);
 }
 
 void Stage::Update()

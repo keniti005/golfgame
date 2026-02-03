@@ -1,16 +1,18 @@
 #include "Player.h"
-#include "Engine/Fbx.h"
 #include "Stage.h"
 #include "Area.h"
+#include "Goal.h"
 #include "Tree.h"
 #include "Engine/Model.h"
 #include "Engine/Input.h"
 #include "Engine/Camera.h"
 #include "Engine/CsvReader.h"
 #include "Engine/SphereCollider.h"
+#include "Engine/SceneManager.h"
+
 
 Player::Player(GameObject* parent)
-	:GameObject(parent, "Player"), mass_(0.5f), force_(0.0f), friction_(-1.1f), gravity_(-5.8f)
+	:GameObject(parent, "Player"),hModel_(-1), mass_(0.5f), force_(0.0f), friction_(-1.1f), gravity_(-5.8f)
 	, velocity{ 0.0f,0.0f,0.0f }, vy(0.0f), isShoot_(false), isFly_(false),club_(IRONCLUB)
 {
 }
@@ -61,7 +63,7 @@ void Player::Update()
 	}
 
 	XMVECTOR vPos = XMLoadFloat3(&transform_.position_);
-#if false
+#if true
 	static float pt = timeGetTime();
 	float ct = timeGetTime();
 	float dt = (ct - pt) / 1000.0f;
@@ -193,35 +195,57 @@ void Player::Update()
 	vPos += vMoveZ;
 	XMStoreFloat3(&transform_.position_, vPos);
 
-	Stage* stage = (Stage*)FindObject("Stage");    //ステージオブジェクトを探す
-	int hStageModel = stage->GetModelHandle();    //モデル番号を取得
 
 	RayCastData data;
 	float rayStart = 10.0f;
 	data.start = transform_.position_;   //レイの発射位置
 	data.start.y = rayStart;
 
+	//ステージ上のレイキャスト
+	Stage* stage = (Stage*)FindObject("Stage");    //ステージオブジェクトを探す
+	int hStageModel = stage->GetModelHandle();    //モデル番号を取得
+
 	data.dir = XMFLOAT3(0, -1, 0);       //レイの方向
 	Model::RayCast(hStageModel, &data); //レイを発射
 
-	Transform t;
+	Transform s;
 	//レイが当たったら
 	if (data.hit)
 	{
 		//その分位置を下げる
 		//transform_.position_.y = -data.dist + data.start.y;
-		t.position_.y = -data.dist + data.start.y;
+		s.position_.y = -data.dist + data.start.y;
 	}
-
-	if (transform_.position_.y <= t.position_.y)
+	if (transform_.position_.y <= s.position_.y)
 	{
 		vy = 0.0f;
-		transform_.position_.y = t.position_.y;
+		transform_.position_.y = s.position_.y;
 		isFly_ = false;
 	}
 	else
 	{
 		vy += gravity_ * dt;
+	}
+
+	//ゴール地点のレイキャスト
+	Goal* goal = (Goal*)FindObject("Goal");    //ステージオブジェクトを探す
+	int hGoalModel = goal->GetModelHandle();    //モデル番号を取得
+	data.dir = XMFLOAT3(0, -1, 0);       //レイの方向
+	Model::RayCast(hGoalModel, &data); //レイを発射
+
+	Transform g;
+	//レイが当たったら
+	if (data.hit)
+	{
+		//その分位置を下げる
+		//transform_.position_.y = -data.dist + data.start.y;
+		g.position_.y = -data.dist + data.start.y;
+		if (transform_.position_.y <= g.position_.y)
+		{
+			vy = 0.0f;
+			transform_.position_.y = g.position_.y;
+			isFly_ = false;
+		}
 	}
 
 #else//デバッグ用
@@ -291,10 +315,10 @@ void Player::OnCollision(GameObject* pTarget)
 		int i = 0;
 		i++;
 	}
-	if (pTarget->GetObjectName() == "Tree")
+	if (pTarget->GetObjectName() == "Goal")
 	{
-		int i = 0;
-		i++;
+		//SceneManager* scene = (SceneManager*)FindObject("SceneManager");
+		//scene->ChangeScene(SCENE_ID_TEST);
 	}
 }
 
