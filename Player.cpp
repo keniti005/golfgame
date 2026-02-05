@@ -13,7 +13,7 @@
 
 Player::Player(GameObject* parent)
 	:GameObject(parent, "Player"),hModel_(-1), mass_(0.5f), force_(0.0f), friction_(-1.1f), gravity_(-5.8f)
-	, velocity{ 0.0f,0.0f,0.0f }, vy(0.0f), isShoot_(false), isFly_(false),club_(IRONCLUB)
+	, velocity{ 0.0f,0.0f,0.0f }, vy(0.0f), isShoot_(false), isFly_(false), isGoal_(false), club_(IRONCLUB)
 {
 }
 
@@ -47,7 +47,7 @@ void Player::Initialize()
 		}
 	}
 
-	SphereCollider* collicion = new SphereCollider(XMFLOAT3(0.0f,transform_.scale_.y / 2.0f,0.0f),1.5f);
+	SphereCollider* collicion = new SphereCollider(XMFLOAT3(0.0f,transform_.scale_.y / 2.0f,0.0f),0.7f);
 	AddCollider(collicion);
 }
 
@@ -67,8 +67,20 @@ void Player::Update()
 	static float pt = timeGetTime();
 	float ct = timeGetTime();
 	float dt = (ct - pt) / 1000.0f;
+	static float Timer = 0;
 	const float MAX_SPEED = 3.0f;
 	ChangeClub();
+	
+	if (isGoal_)
+	{
+		//ƒ^ƒCƒ}[‚ª‚P‚O•bŒo‰ß‚µ‚½‚çƒV[ƒ“‘JˆÚ
+		Timer += dt;
+		if (Timer >= 10.0f)
+		{
+			SceneManager* scene = (SceneManager*)FindObject("SceneManager");
+			scene->ChangeScene(SCENE_ID_TEST);
+		}
+	}
 
 	switch (club_)
 	{
@@ -186,9 +198,10 @@ void Player::Update()
 
 	XMMATRIX mRotate = XMMatrixRotationY(XMConvertToRadians(transform_.rotate_.y));
 	vMoveZ = XMVector3TransformCoord(vMoveZ,mRotate);
-	OutputDebugStringA(("force_:" + std::to_string(force_) + "\n").c_str());
-	OutputDebugStringA(("vy:" + std::to_string(vy) + "\n").c_str());
-	OutputDebugStringA(("position_.y:" + std::to_string(transform_.position_.y) + "\n").c_str());
+	//OutputDebugStringA(("force_:" + std::to_string(force_) + "\n").c_str());
+	//OutputDebugStringA(("vy:" + std::to_string(vy) + "\n").c_str());
+	//OutputDebugStringA(("position_.y:" + std::to_string(transform_.position_.y) + "\n").c_str());
+	OutputDebugStringA(("Timer:" + std::to_string(Timer) + "\n").c_str());
 
 
 	vPos += vMoveY;
@@ -317,8 +330,8 @@ void Player::OnCollision(GameObject* pTarget)
 	}
 	if (pTarget->GetObjectName() == "Goal")
 	{
-		//SceneManager* scene = (SceneManager*)FindObject("SceneManager");
-		//scene->ChangeScene(SCENE_ID_TEST);
+		isGoal_ = true;
+		force_ = 0.0f;
 	}
 }
 

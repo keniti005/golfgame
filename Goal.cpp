@@ -29,7 +29,7 @@ void Goal::Initialize()
 		assert(hModels_[i] > 0);
 		if (fileName_[i] == "goalArea.fbx")
 		{
-			BoxCollider* collider = new BoxCollider(transform_.position_, XMFLOAT3(2.0f,1.5f,2.0f));
+			BoxCollider* collider = new BoxCollider(transform_.position_, XMFLOAT3(2.0f,0.5f,2.0f));
 			AddCollider(collider);
 		}
 	}
