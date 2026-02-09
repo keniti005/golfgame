@@ -47,7 +47,7 @@ void Player::Initialize()
 		}
 	}
 
-	SphereCollider* collicion = new SphereCollider(XMFLOAT3(0.0f,transform_.scale_.y / 2.0f,0.0f),0.7f);
+	SphereCollider* collicion = new SphereCollider(XMFLOAT3(0.0f,transform_.scale_.y / 2.0f,0.0f),0.5f);
 	AddCollider(collicion);
 }
 
@@ -77,6 +77,7 @@ void Player::Update()
 		Timer += dt;
 		if (Timer >= 10.0f)
 		{
+			Timer = 0.0f;
 			SceneManager* scene = (SceneManager*)FindObject("SceneManager");
 			scene->ChangeScene(SCENE_ID_TEST);
 		}
@@ -87,109 +88,51 @@ void Player::Update()
 	case IRONCLUB:
 		velocity.y = 2.0f;
 		velocity.z = 3.0f;
-		if (!(isShoot_))
-		{
-			if (Input::IsKeyDown(DIK_SPACE))
-			{
-				force_ = velocity.z * mass_;//‰^“®•û’öŽ®
-				vy = velocity.y * sinf(45.0f) + gravity_ * dt;//ŽÎ•û“ŠŽË
-				isFly_ = true;
-				isShoot_ = true;
-			}
-		}
-		else
-		{
-			if (!(isFly_))
-			{
-				if (force_ > 0)
-				{
-					force_ += friction_ * dt;
-				}
-				else
-				{
-					force_ = 0.0f;
-					isShoot_ = false;
-				}
-			}
-
-			if (force_ > MAX_SPEED)
-			{
-				force_ = MAX_SPEED;
-			}
-		}
 		break;
 	case WOODENCLUB:
 		velocity.y = 3.5f;
 		velocity.z = 1.5f;
-		if (!(isShoot_))
-		{
-			if (Input::IsKeyDown(DIK_SPACE))
-			{
-				force_ = velocity.z * mass_;//‰^“®•û’öŽ®
-				vy = velocity.y * sinf(45.0f) + gravity_ * dt;//ŽÎ•û“ŠŽË
-				isFly_ = true;
-				isShoot_ = true;
-			}
-		}
-		else
-		{
-			if (!(isFly_))
-			{
-				if (force_ > 0)
-				{
-					force_ += friction_ * dt;
-				}
-				else
-				{
-					force_ = 0.0f;
-					isShoot_ = false;
-				}
-			}
-
-			if (force_ > MAX_SPEED)
-			{
-				force_ = MAX_SPEED;
-			}
-		}
 		break;
 	case SMALLCLUB:
 		velocity.y = 0.0f;
 		velocity.z = 3.5f;
-		if (!(isShoot_))
-		{
-			if (Input::IsKeyDown(DIK_SPACE))
-			{
-				force_ = velocity.z * mass_;//‰^“®•û’öŽ®
-				vy = velocity.y * sinf(45.0f) + gravity_ * dt;//ŽÎ•û“ŠŽË
-				isFly_ = true;
-				isShoot_ = true;
-			}
-		}
-		else
-		{
-			if (!(isFly_))
-			{
-				if (force_ > 0)
-				{
-					force_ += friction_ * dt;
-				}
-				else
-				{
-					force_ = 0.0f;
-					isShoot_ = false;
-				}
-			}
-
-			if (force_ > MAX_SPEED)
-			{
-				force_ = MAX_SPEED;
-			}
-		}
-
 		break;
 	default:
 		break;
 	}
+
+	if (!(isShoot_))
+	{
+		if (Input::IsKeyDown(DIK_SPACE))
+		{
+			force_ = velocity.z * mass_;//‰^“®•û’öŽ®
+			vy = velocity.y * sinf(45.0f) + gravity_ * dt;//ŽÎ•û“ŠŽË
+			isFly_ = true;
+			isShoot_ = true;
+		}
+	}
+	else
+	{
+		if (!(isFly_))
+		{
+			if (force_ > 0)
+			{
+				force_ += friction_ * dt;
+			}
+			else
+			{
+				force_ = 0.0f;
+				isShoot_ = false;
+				isTreeHit_ = false;
+			}
+		}
+
+		if (force_ > MAX_SPEED)
+		{
+			force_ = MAX_SPEED;
+		}
+	}
+
 	pt = ct;
 
 
@@ -203,9 +146,20 @@ void Player::Update()
 	//OutputDebugStringA(("position_.y:" + std::to_string(transform_.position_.y) + "\n").c_str());
 	OutputDebugStringA(("Timer:" + std::to_string(Timer) + "\n").c_str());
 
-
+	
 	vPos += vMoveY;
-	vPos += vMoveZ;
+	if (isTreeHit_)
+	{
+		//”½”­‚ÌŒvŽZ
+		XMVECTOR normal = XMVectorSet(0.0f, 0.0f, 1.0f, 0.0f);
+		XMVector3Normalize(normal);
+		vMoveZ = vMoveZ - 1.5f * XMVector3Dot(vMoveZ, normal) * normal;
+		vPos += vMoveZ;
+	}
+	else
+	{
+		vPos += vMoveZ;
+	}
 	XMStoreFloat3(&transform_.position_, vPos);
 
 
@@ -325,8 +279,7 @@ void Player::OnCollision(GameObject* pTarget)
 {
 	if (pTarget->GetObjectName() == "Tree")
 	{
-		int i = 0;
-		i++;
+		isTreeHit_ = true;
 	}
 	if (pTarget->GetObjectName() == "Goal")
 	{

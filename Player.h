@@ -40,5 +40,6 @@ private:
     bool isFly_;//ボールが上に飛んでいないか
     //bool isRool_;//ボールが転がっているかいないか
     bool isGoal_;//ゴールしたか
+    bool isTreeHit_;
 };
 

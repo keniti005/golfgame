@@ -20,7 +20,7 @@ void Tree::Initialize()
 	hModel_ = Model::Load("tree.fbx");
 	assert(hModel_ > 0);
 	BoxCollider* collicion = new BoxCollider(XMFLOAT3(transform_.position_.x, transform_.position_.y + (transform_.scale_.y + 2.5) / 2.0f, transform_.position_.z),
-		XMFLOAT3(transform_.scale_.x, transform_.scale_.y + 2.5, transform_.scale_.z));
+		XMFLOAT3(transform_.scale_.x / 2.0f, transform_.scale_.y + 2.5, transform_.scale_.z / 2.0f));
 	AddCollider(collicion);
 }
 
