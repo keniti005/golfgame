@@ -26,9 +26,11 @@ public:
     void Draw() override;
     void Release() override;
     void OnCollision(GameObject* pTarget) override;
+    bool IsShoot() { return isShoot_; }
 private:
     void ChangeClub();
     int hModel_;
+    int hPict_;//‰æ‘œ
     MyStruct velocity;
     CLUB club_;
     float mass_;//Ž¿—Ê
