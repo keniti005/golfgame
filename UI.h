@@ -2,6 +2,7 @@
 #include "Engine/GameObject.h"
 #include <vector>
 #include <string>
+#include <algorithm>
 
 class UI :
     public GameObject
@@ -14,7 +15,8 @@ public:
 	void Draw() override;
 	void Release() override;
 private:
-	std::vector<int> hPicts_;
+	std::vector<int> hMetaPict_;
+	std::vector<int> hClubPict_;
 	std::vector<std::string> fileName_;
 };
 
