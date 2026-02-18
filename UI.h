@@ -17,6 +17,5 @@ public:
 private:
 	std::vector<int> hMetaPict_;
 	std::vector<int> hClubPict_;
-	std::vector<std::string> fileName_;
 };
 

@@ -15,18 +15,18 @@ UI::~UI()
 
 void UI::Initialize()
 {
-	fileName_ =
+	hMetaPict_.push_back(Image::Load("hitMeta.png"));
+	hMetaPict_.push_back(Image::Load("hitMetaFrame.png"));
+	for (int i = 0; i < hMetaPict_.size(); i++)
 	{
-		"hitMeta.png",
-		"hitMetaFrame.png"
-		//"ironClubUI.png",
-		//"smallClubUI.png",
-		//"woodenClubUI.png"
-	};
-	for (int i = 0; i < fileName_.size();i++)
-	{
-		hMetaPict_.push_back(Image::Load(fileName_[i]));
 		assert(hMetaPict_[i] >= 0);
+	}
+	hClubPict_.push_back(Image::Load("ironClubUI.png"));
+	hClubPict_.push_back(Image::Load("smallClubUI.png"));
+	hClubPict_.push_back(Image::Load("woodenClubUI.png"));
+	for (int i = 0; i < hMetaPict_.size();i++)
+	{
+		assert(hClubPict_[i] >= 0);
 	}
 }
 
@@ -54,7 +54,8 @@ void UI::Draw()
 			Image::SetTransform(hMetaPict_[i], tHitMeta);
 			Image::Draw(hMetaPict_[i]);
 		}
-
+		Image::SetTransform(hClubPict_[i], tClub);
+		Image::Draw(hClubPict_[i]);
 	}
 }
 
