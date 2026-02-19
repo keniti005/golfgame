@@ -17,6 +17,11 @@ public:
 private:
 	std::vector<int> hMetaPict_;
 	std::vector<int> hClubPict_;
+	Transform tHitMeta;
+	Transform tArow;
+	Transform tClub;
+	int hArowPict_;
+	float powerTimer_;
 	std::string clearText_;
 	Text* pText_;
 };

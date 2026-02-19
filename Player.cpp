@@ -67,7 +67,7 @@ void Player::Update()
 	static float pt = timeGetTime();
 	float ct = timeGetTime();
 	float dt = (ct - pt) / 1000.0f;
-	static float Timer = 0;
+	static float goalTimer = 0;
 	const float MAX_SPEED = 3.0f;
 	ChangeClub();
 	
@@ -132,7 +132,7 @@ void Player::Update()
 	//OutputDebugStringA(("force_:" + std::to_string(force_) + "\n").c_str());
 	//OutputDebugStringA(("vy:" + std::to_string(vy) + "\n").c_str());
 	//OutputDebugStringA(("position_.y:" + std::to_string(transform_.position_.y) + "\n").c_str());
-	OutputDebugStringA(("Timer:" + std::to_string(Timer) + "\n").c_str());
+	//OutputDebugStringA(("Timer:" + std::to_string(goalTimer) + "\n").c_str());
 
 	
 	vPos += vMoveY;
@@ -150,7 +150,7 @@ void Player::Update()
 	}
 	XMStoreFloat3(&transform_.position_, vPos);
 
-
+	
 	RayCastData data;
 	float rayStart = 10.0f;
 	data.start = transform_.position_;   //レイの発射位置
@@ -206,10 +206,10 @@ void Player::Update()
 	if (pGoal->IsGoal())
 	{
 		//タイマーが5秒経過したらシーン遷移
-		Timer += dt;
-		if (Timer >= 5.0f)
+		goalTimer += dt;
+		if (goalTimer >= 5.0f)
 		{
-			Timer = 0.0f;
+			goalTimer = 0.0f;
 			SceneManager* scene = (SceneManager*)FindObject("SceneManager");
 			scene->ChangeScene(SCENE_ID_TEST);
 		}
