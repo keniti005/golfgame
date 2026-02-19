@@ -13,7 +13,7 @@
 
 Player::Player(GameObject* parent)
 	:GameObject(parent, "Player"),hModel_(-1), mass_(0.5f), force_(0.0f), friction_(-1.1f), gravity_(-5.8f)
-	, velocity{ 0.0f,0.0f,0.0f }, vy(0.0f), isShoot_(false), isFly_(false), isGoal_(false), club_(IRONCLUB)
+	, velocity{ 0.0f,0.0f,0.0f }, vy(0.0f), isShoot_(false), isFly_(false), club_(IRONCLUB)
 {
 }
 
@@ -71,18 +71,6 @@ void Player::Update()
 	const float MAX_SPEED = 3.0f;
 	ChangeClub();
 	
-	if (isGoal_)
-	{
-		//タイマーが１０秒経過したらシーン遷移
-		Timer += dt;
-		if (Timer >= 10.0f)
-		{
-			Timer = 0.0f;
-			SceneManager* scene = (SceneManager*)FindObject("SceneManager");
-			scene->ChangeScene(SCENE_ID_TEST);
-		}
-	}
-
 	switch (club_)
 	{
 	case IRONCLUB:
@@ -169,24 +157,24 @@ void Player::Update()
 	data.start.y = rayStart;
 
 	//ステージ上のレイキャスト
-	Stage* stage = (Stage*)FindObject("Stage");    //ステージオブジェクトを探す
-	int hStageModel = stage->GetModelHandle();    //モデル番号を取得
+	Stage* pStage = (Stage*)FindObject("Stage");    //ステージオブジェクトを探す
+	int hStageModel = pStage->GetModelHandle();    //モデル番号を取得
 
 	data.dir = XMFLOAT3(0, -1, 0);       //レイの方向
 	Model::RayCast(hStageModel, &data); //レイを発射
 
-	Transform s;
+	Transform tStage;
 	//レイが当たったら
 	if (data.hit)
 	{
 		//その分位置を下げる
 		//transform_.position_.y = -data.dist + data.start.y;
-		s.position_.y = -data.dist + data.start.y;
+		tStage.position_.y = -data.dist + data.start.y;
 	}
-	if (transform_.position_.y <= s.position_.y)
+	if (transform_.position_.y <= tStage.position_.y)
 	{
 		vy = 0.0f;
-		transform_.position_.y = s.position_.y;
+		transform_.position_.y = tStage.position_.y;
 		isFly_ = false;
 	}
 	else
@@ -195,23 +183,35 @@ void Player::Update()
 	}
 
 	//ゴール地点のレイキャスト
-	Goal* goal = (Goal*)FindObject("Goal");    //ステージオブジェクトを探す
-	int hGoalModel = goal->GetModelHandle();    //モデル番号を取得
+	Goal* pGoal = (Goal*)FindObject("Goal");    //ステージオブジェクトを探す
+	int hGoalModel = pGoal->GetModelHandle();    //モデル番号を取得
 	data.dir = XMFLOAT3(0, -1, 0);       //レイの方向
 	Model::RayCast(hGoalModel, &data); //レイを発射
 
-	Transform g;
+	Transform tGoal;
 	//レイが当たったら
 	if (data.hit)
 	{
 		//その分位置を下げる
 		//transform_.position_.y = -data.dist + data.start.y;
-		g.position_.y = -data.dist + data.start.y;
-		if (transform_.position_.y <= g.position_.y)
+		tGoal.position_.y = -data.dist + data.start.y;
+		if (transform_.position_.y <= tGoal.position_.y)
 		{
 			vy = 0.0f;
-			transform_.position_.y = g.position_.y;
+			transform_.position_.y = tGoal.position_.y;
 			isFly_ = false;
+		}
+	}
+
+	if (pGoal->IsGoal())
+	{
+		//タイマーが5秒経過したらシーン遷移
+		Timer += dt;
+		if (Timer >= 5.0f)
+		{
+			Timer = 0.0f;
+			SceneManager* scene = (SceneManager*)FindObject("SceneManager");
+			scene->ChangeScene(SCENE_ID_TEST);
 		}
 	}
 
@@ -283,14 +283,13 @@ void Player::OnCollision(GameObject* pTarget)
 	}
 	if (pTarget->GetObjectName() == "Goal")
 	{
-		isGoal_ = true;
 		force_ = 0.0f;
 	}
 }
 
 void Player::ChangeClub()
 {
-	if (Input::IsKeyUp(DIK_UP))
+	if (Input::IsKeyDown(DIK_UP))
 	{
 		switch (club_)
 		{

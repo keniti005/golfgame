@@ -1,5 +1,6 @@
 #pragma once
 #include "Engine/GameObject.h"
+#include "Engine/Text.h"
 #include <vector>
 #include <string>
 
@@ -16,5 +17,7 @@ public:
 private:
 	std::vector<int> hMetaPict_;
 	std::vector<int> hClubPict_;
+	std::string clearText_;
+	Text* pText_;
 };
 

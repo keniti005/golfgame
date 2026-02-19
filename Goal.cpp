@@ -15,6 +15,7 @@ Goal::~Goal()
 
 void Goal::Initialize()
 {
+	isGoal_ = false;
 	transform_.scale_.x = 1.0f;
 	transform_.scale_.y = 1.0f;
 	transform_.scale_.z = 1.0f;
@@ -54,6 +55,14 @@ void Goal::Release()
 	for (int i = 0; i < hModels_.size(); i++)
 	{
 		Model::Release(hModels_[i]);
+	}
+}
+
+void Goal::OnCollision(GameObject* pTarget)
+{
+	if (pTarget->GetObjectName() == "Player")
+	{
+		isGoal_ = true;
 	}
 }
 
