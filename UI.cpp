@@ -22,8 +22,8 @@ void UI::Initialize()
 		assert(hMetaPict_[i] >= 0);
 	}
 	hClubPict_.push_back(Image::Load("ironClubUI.png"));
-	hClubPict_.push_back(Image::Load("smallClubUI.png"));
 	hClubPict_.push_back(Image::Load("woodenClubUI.png"));
+	hClubPict_.push_back(Image::Load("smallClubUI.png"));
 	for (int i = 0; i < hMetaPict_.size();i++)
 	{
 		assert(hClubPict_[i] >= 0);
@@ -37,14 +37,15 @@ void UI::Update()
 void UI::Draw()
 {
 	Player* player = (Player*)FindObject("Player");
+	int currentClub = player->GetClub();
 	Transform tHitMeta;
 	tHitMeta.position_.x = 0.2f;
 	tHitMeta.position_.y = 0.2f;
 	tHitMeta.position_.z = 0.0f;
-
+	
 	Transform tClub;
-	tClub.position_.x = 0.7f;
-	tClub.position_.y = 0.7f;
+	tClub.position_.x = 0.85f;
+	tClub.position_.y = 0.9f;
 	tClub.position_.z = 0.0f;
 
 	for (int i = 0; i < hMetaPict_.size(); i++)
@@ -54,9 +55,10 @@ void UI::Draw()
 			Image::SetTransform(hMetaPict_[i], tHitMeta);
 			Image::Draw(hMetaPict_[i]);
 		}
-		Image::SetTransform(hClubPict_[i], tClub);
-		Image::Draw(hClubPict_[i]);
 	}
+	
+	Image::SetTransform(hClubPict_[currentClub], tClub);
+	Image::Draw(hClubPict_[currentClub]);
 }
 
 void UI::Release()

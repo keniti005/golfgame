@@ -27,6 +27,8 @@ public:
     void Release() override;
     void OnCollision(GameObject* pTarget) override;
     bool IsShoot() { return isShoot_; }
+    int GetClub() { return club_; }
+    
 private:
     void ChangeClub();
     int hModel_;

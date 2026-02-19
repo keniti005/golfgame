@@ -2,7 +2,6 @@
 #include "Engine/GameObject.h"
 #include <vector>
 #include <string>
-#include <algorithm>
 
 class UI :
     public GameObject
