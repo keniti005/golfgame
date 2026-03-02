@@ -5,7 +5,7 @@
 #include <string>
 
 Goal::Goal(GameObject* parent)
-	:GameObject(parent,"Goal")
+	:GameObject(parent,"Goal"),isGoal_(false)
 {
 }
 
@@ -52,10 +52,6 @@ void Goal::Draw()
 
 void Goal::Release()
 {
-	for (int i = 0; i < hModels_.size(); i++)
-	{
-		Model::Release(hModels_[i]);
-	}
 }
 
 void Goal::OnCollision(GameObject* pTarget)

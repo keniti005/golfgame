@@ -96,9 +96,4 @@ void Stage::Draw()
 
 void Stage::Release()
 {
-	//for (int i = 0; i < hModels_.size();i++)
-	//{
-	//	Model::Release(hModels_[i]);
-	//}
-	Model::Release(hModel_);
 }
