@@ -2,6 +2,7 @@
 #include "Engine/Model.h"
 #include "Engine/CsvReader.h"
 #include "Engine/BoxCollider.h"
+#include "Engine/Input.h"
 #include <string>
 
 Goal::Goal(GameObject* parent)
@@ -38,6 +39,10 @@ void Goal::Initialize()
 
 void Goal::Update()
 {
+	if (Input::IsKeyDown(DIK_P))
+	{
+		isGoal_ = true;
+	}
 }
 
 void Goal::Draw()
