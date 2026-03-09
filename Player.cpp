@@ -8,12 +8,11 @@
 #include "Engine/Camera.h"
 #include "Engine/CsvReader.h"
 #include "Engine/SphereCollider.h"
-#include "Engine/SceneManager.h"
 
 
 Player::Player(GameObject* parent)
 	:GameObject(parent, "Player"),hModel_(-1), mass_(0.5f), force_(0.0f), friction_(-1.1f), gravity_(-5.8f)
-	, velocity{ 0.0f,0.0f,0.0f }, vy(0.0f), isShoot_(false), isFly_(false), club_(IRONCLUB)
+	, velocity{ 0.0f,0.0f,0.0f }, vy(0.0f), isShoot_(false), isFly_(false), isTreeHit_(false), club_(IRONCLUB)
 {
 }
 
@@ -67,7 +66,6 @@ void Player::Update()
 	static float pt = timeGetTime();
 	float ct = timeGetTime();
 	float dt = (ct - pt) / 1000.0f;
-	static float goalTimer = 0;
 	const float MAX_SPEED = 3.0f;
 	ChangeClub();
 	
@@ -203,18 +201,6 @@ void Player::Update()
 		}
 	}
 
-	if (pGoal->IsGoal())
-	{
-		//タイマーが5秒経過したらシーン遷移
-		goalTimer += dt;
-		if (goalTimer >= 5.0f)
-		{
-			goalTimer = 0.0f;
-			SceneManager* scene = (SceneManager*)FindObject("SceneManager");
-			scene->ChangeScene(SCENE_ID_TEST);
-		}
-	}
-
 #else//デバッグ用
 	XMVECTOR vMoveY = XMVectorSet(0, 0.4f, 0, 0);
 	XMVECTOR vMoveZ = XMVectorSet(0, 0, 0.4f, 0);
@@ -272,7 +258,6 @@ void Player::Draw()
 
 void Player::Release()
 {
-	Model::Release(hModel_);
 }
 
 void Player::OnCollision(GameObject* pTarget)

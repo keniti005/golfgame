@@ -15,5 +15,4 @@ public:
 	int GetModelHandle() { return hModel_; }
 private:
 	int hModel_;
-	int csvValue_[256][256];
 };
