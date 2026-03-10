@@ -156,7 +156,7 @@ void Player::Update()
 
 	
 	RayCastData data;
-	float rayStart = 10.0f;
+	float rayStart = 20.0f;
 	data.start = transform_.position_;   //ƒŒƒC‚Ì”­ËˆÊ’u
 	data.start.y = rayStart;
 
