@@ -97,7 +97,7 @@ void UI::Draw()
 
 	if (pGoal->IsGoal())
 	{
-		pText_->Draw(600, 50, "GameClear");
+		pText_->Draw(600, 50, clearText_.c_str());
 	}
 	else
 	{
@@ -114,14 +114,10 @@ void UI::Draw()
 
 		Image::SetTransform(hClubPict_[currentClub], tClub);
 		Image::Draw(hClubPict_[currentClub]);
-
+	}
 	if (pPlayer->IsShoot())
 	{
 		tArow.position_.y = tHitMeta.position_.y - 0.3f;
-	}
-	if (pGoal->IsGoal())
-	{
-		pText_->Draw(600, 50, clearText_.c_str());
 	}
 }
 
