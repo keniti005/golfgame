@@ -4,13 +4,15 @@
 
 //コンストラクタ
 TestScene::TestScene(GameObject * parent)
-	: GameObject(parent, "TestScene")
+	: GameObject(parent, "TestScene"),pText_(nullptr)
 {
 }
 
 //初期化
 void TestScene::Initialize()
 {
+	pText_ = new Text();
+	pText_->Initialize();
 }
 
 //更新
@@ -26,6 +28,7 @@ void TestScene::Update()
 //描画
 void TestScene::Draw()
 {
+	pText_->Draw(64, 64, "TitleScene");
 }
 
 //開放

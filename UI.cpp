@@ -95,19 +95,25 @@ void UI::Draw()
 	Goal* pGoal = (Goal*)FindObject("Goal");
 	int currentClub = pPlayer->GetClub();
 
-	for (int i = 0; i < hMetaPict_.size(); i++)
+	if (pGoal->IsGoal())
 	{
-		if (!(pPlayer->IsShoot()))
-		{
-			Image::SetTransform(hMetaPict_[i], tHitMeta);
-			Image::Draw(hMetaPict_[i]);
-			Image::SetTransform(hArowPict_, tArow);
-			Image::Draw(hArowPict_);
-		}
+		pText_->Draw(600, 50, "GameClear");
 	}
-	
-	Image::SetTransform(hClubPict_[currentClub], tClub);
-	Image::Draw(hClubPict_[currentClub]);
+	else
+	{
+		for (int i = 0; i < hMetaPict_.size(); i++)
+		{
+			if (!(pPlayer->IsShoot()))
+			{
+				Image::SetTransform(hMetaPict_[i], tHitMeta);
+				Image::Draw(hMetaPict_[i]);
+				Image::SetTransform(hArowPict_, tArow);
+				Image::Draw(hArowPict_);
+			}
+		}
+
+		Image::SetTransform(hClubPict_[currentClub], tClub);
+		Image::Draw(hClubPict_[currentClub]);
 
 	if (pPlayer->IsShoot())
 	{
