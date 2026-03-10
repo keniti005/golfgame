@@ -13,6 +13,7 @@
 Player::Player(GameObject* parent)
 	:GameObject(parent, "Player"),hModel_(-1), mass_(0.5f), force_(0.0f), friction_(-1.1f), gravity_(-5.8f)
 	, velocity{ 0.0f,0.0f,0.0f }, vy(0.0f), isShoot_(false), isFly_(false), isTreeHit_(false), club_(IRONCLUB)
+	, rangeNum_(0)
 {
 }
 
@@ -48,6 +49,11 @@ void Player::Initialize()
 
 	SphereCollider* collicion = new SphereCollider(XMFLOAT3(0.0f,transform_.scale_.y / 2.0f,0.0f),0.5f);
 	AddCollider(collicion);
+
+	powerRate_.push_back(0.5f);
+	powerRate_.push_back(0.7f);
+	powerRate_.push_back(0.95f);
+	powerRate_.push_back(1.15f);
 }
 
 void Player::Update()
@@ -81,7 +87,7 @@ void Player::Update()
 		break;
 	case SMALLCLUB:
 		velocity.y = 0.0f;
-		velocity.z = 3.5f;
+		velocity.z = 2.7f;
 		break;
 	default:
 		break;
@@ -91,7 +97,7 @@ void Player::Update()
 	{
 		if (Input::IsKeyDown(DIK_SPACE))
 		{
-			force_ = velocity.z * mass_;//‰^“®•û’ö®
+			force_ = (velocity.z * powerRate_[rangeNum_]) * mass_;//‰^“®•û’ö®
 			vy = velocity.y * sinf(45.0f) + gravity_ * dt;//Î•û“ŠË
 			isFly_ = true;
 			isShoot_ = true;
@@ -131,8 +137,8 @@ void Player::Update()
 	//OutputDebugStringA(("vy:" + std::to_string(vy) + "\n").c_str());
 	//OutputDebugStringA(("position_.y:" + std::to_string(transform_.position_.y) + "\n").c_str());
 	//OutputDebugStringA(("Timer:" + std::to_string(goalTimer) + "\n").c_str());
+	//OutputDebugStringA(("range:" + std::to_string(rangeNum_) + "\n").c_str());
 
-	
 	vPos += vMoveY;
 	if (isTreeHit_)
 	{
@@ -270,6 +276,12 @@ void Player::OnCollision(GameObject* pTarget)
 	{
 		force_ = 0.0f;
 	}
+}
+
+void Player::SetRange(int range)
+{
+	//”z—ñ‚Ì”ÍˆÍ“à‚Éİ’è‚·‚é‚½‚ß-1
+	rangeNum_ = range - 1;
 }
 
 void Player::ChangeClub()

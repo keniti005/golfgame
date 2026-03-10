@@ -49,23 +49,44 @@ void UI::Initialize()
 
 void UI::Update()
 {
+	Player* pPlayer = (Player*)FindObject("Player");
+	float speed = 50.0f;
+	/*ƒpƒ[”ÍˆÍ
+	Ô	    0.44`0.5 4’iŠK
+	‰©F    0.28`0.44 3’iŠK
+	—Î	    0.1`0.28 2’iŠK
+	Â	   -0.1`0.1 1’iŠK
+	*/
 	//ˆÚ“®”ÍˆÍ-0.1`0.5(0.6‚Ì·)
-	static float pt = timeGetTime();
-	float ct = timeGetTime();
-	float dt = (ct - pt) / 1000.0f;
-	if (powerTimer_ >= 2.0f)
+	if (!(pPlayer->IsShoot()))
 	{
-		powerTimer_ = 0.0f;
-		tArow.position_.y = tHitMeta.position_.y - 0.3f;
+		if (tArow.position_.y < 0.5f)
+		{
+			tArow.position_.y += 0.6f / speed;
+		}
+		else
+		{
+			tArow.position_.y = tHitMeta.position_.y - 0.3f;
+		}
+		float powerRange = tArow.position_.y;
+		if (powerRange >= 0.44f)
+		{
+			pPlayer->SetRange(4);
+		}
+		else if (powerRange >= 0.28f && powerRange < 0.44f)
+		{
+			pPlayer->SetRange(3);
+		}
+		else if (powerRange >= 0.1f && powerRange < 0.28f)
+		{
+			pPlayer->SetRange(2);
+		}
+		else if (powerRange < 0.1f)
+		{
+			pPlayer->SetRange(1);
+		}
 	}
-	else
-	{
-		powerTimer_ += dt;
-		tArow.position_.y += powerTimer_ / 200.0f;
-	}
-	//OutputDebugStringA(("Timer:" + std::to_string(powerTimer_) + "\n").c_str());
-	//OutputDebugStringA(("position:" + std::to_string(tArow.position_.y) + "\n").c_str());
-	pt = ct;
+	//OutputDebugStringA(("position:" + std::to_string(powerRange) + "\n").c_str());
 }
 
 void UI::Draw()
@@ -90,11 +111,11 @@ void UI::Draw()
 
 	if (pPlayer->IsShoot())
 	{
-		tArow.position_.y = tArow.position_.y = tHitMeta.position_.y - 0.3f;
+		tArow.position_.y = tHitMeta.position_.y - 0.3f;
 	}
 	if (pGoal->IsGoal())
 	{
-		pText_->Draw(600, 50, "GameClear");
+		pText_->Draw(600, 50, clearText_.c_str());
 	}
 }
 
