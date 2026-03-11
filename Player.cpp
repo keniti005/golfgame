@@ -13,7 +13,7 @@
 Player::Player(GameObject* parent)
 	:GameObject(parent, "Player"),hModel_(-1), mass_(0.5f), force_(0.0f), friction_(-1.1f), gravity_(-5.8f)
 	, velocity{ 0.0f,0.0f,0.0f }, vy(0.0f), isShoot_(false), isFly_(false), isTreeHit_(false), club_(IRONCLUB)
-	, rangeNum_(0)
+	, rangeNum_(0), csvSenterVal_{ 0.0f,0.0f,0.0f }, camTargetNow_(PLAYER)
 {
 }
 
@@ -41,11 +41,13 @@ void Player::Initialize()
 		{
 			if (csv.GetValue(x, y) == 11)
 			{
-				transform_.position_.x =  (10.0f * x);
+				transform_.position_.x = (10.0f * x);
 				transform_.position_.z = -(10.0f * y);
 			}
 		}
 	}
+	csvSenterVal_.x = w / 2.0f;
+	csvSenterVal_.z = h / 2.0f;
 
 	SphereCollider* collicion = new SphereCollider(XMFLOAT3(0.0f,transform_.scale_.y / 2.0f,0.0f),0.5f);
 	AddCollider(collicion);
@@ -58,6 +60,10 @@ void Player::Initialize()
 
 void Player::Update()
 {
+	if (Input::IsKeyDown(DIK_M))
+	{
+		ChangeCamera();
+	}
 	if (Input::IsKey(DIK_D))
 	{
 		transform_.rotate_.y += 1.2f;
@@ -74,7 +80,7 @@ void Player::Update()
 	float dt = (ct - pt) / 1000.0f;
 	const float MAX_SPEED = 3.0f;
 	ChangeClub();
-	
+
 	switch (club_)
 	{
 	case IRONCLUB:
@@ -95,7 +101,7 @@ void Player::Update()
 
 	if (!(isShoot_))
 	{
-		if (Input::IsKeyDown(DIK_SPACE))
+		if (Input::IsKeyDown(DIK_SPACE) && camTargetNow_ == PLAYER)
 		{
 			force_ = (velocity.z * powerRate_[rangeNum_]) * mass_;//運動方程式
 			vy = velocity.y * sinf(45.0f) + gravity_ * dt;//斜方投射
@@ -132,7 +138,7 @@ void Player::Update()
 	XMVECTOR vMoveZ = XMVectorSet(0, 0, force_, 0);
 
 	XMMATRIX mRotate = XMMatrixRotationY(XMConvertToRadians(transform_.rotate_.y));
-	vMoveZ = XMVector3TransformCoord(vMoveZ,mRotate);
+	vMoveZ = XMVector3TransformCoord(vMoveZ, mRotate);
 	//OutputDebugStringA(("force_:" + std::to_string(force_) + "\n").c_str());
 	//OutputDebugStringA(("vy:" + std::to_string(vy) + "\n").c_str());
 	//OutputDebugStringA(("position_.y:" + std::to_string(transform_.position_.y) + "\n").c_str());
@@ -154,7 +160,7 @@ void Player::Update()
 	}
 	XMStoreFloat3(&transform_.position_, vPos);
 
-	
+
 	RayCastData data;
 	float rayStart = 20.0f;
 	data.start = transform_.position_;   //レイの発射位置
@@ -245,14 +251,34 @@ void Player::Update()
 	}
 # endif
 
-	XMVECTOR vCam = { 0,2.0f,-7.0f,0 };
+	XMVECTOR vCam;
 	XMFLOAT3 camPos;
-	vCam = XMVector3TransformCoord(vCam, mRotate);
-	XMStoreFloat3(&camPos,vPos + vCam);
-	Camera::SetPosition(camPos);
+	XMFLOAT3 CamTarget;
+	float camPosY;
 
-	XMFLOAT3 CamTarget = transform_.position_; 
-	Camera::SetTarget(CamTarget);
+	switch (camTargetNow_)
+	{
+	case PLAYER:
+		vCam = { 0,2.0f,-9.0f,0 };
+		vCam = XMVector3TransformCoord(vCam, mRotate);
+		XMStoreFloat3(&camPos, vPos + vCam);
+		Camera::SetPosition(camPos);
+		CamTarget = transform_.position_;
+		Camera::SetTarget(CamTarget);
+		break;
+	case STAGESENTER:
+		//ステージを上から見た視点
+		camPosY = 300.0f;
+		vCam = { 10.0f * csvSenterVal_.x,camPosY,-10.0f * csvSenterVal_.z,0.0f };
+		camPos;
+		XMStoreFloat3(&camPos, vCam);
+		Camera::SetPosition(camPos);
+		CamTarget = { 10.0f * csvSenterVal_.x, 0.0f, (-10.0f + 1.0f) * csvSenterVal_.z };
+		Camera::SetTarget(CamTarget);
+		break;
+	default:
+		break;
+	}
 }
 
 void Player::Draw()
@@ -321,5 +347,20 @@ void Player::ChangeClub()
 			club_ = IRONCLUB;
 			break;
 		}
+	}
+}
+
+void Player::ChangeCamera()
+{
+	switch (camTargetNow_)
+	{
+	case PLAYER:
+		camTargetNow_ = STAGESENTER;
+		break;
+	case STAGESENTER:
+		camTargetNow_ = PLAYER;
+	default:
+		camTargetNow_ = PLAYER;
+		break;
 	}
 }

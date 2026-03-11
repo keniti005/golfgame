@@ -99,7 +99,7 @@ void UI::Draw()
 	{
 		pText_->Draw(600, 50, clearText_.c_str());
 	}
-	else
+	else if(!(pGoal->IsGoal()) && pPlayer->CameraMode() == PLAYER)
 	{
 		for (int i = 0; i < hMetaPict_.size(); i++)
 		{

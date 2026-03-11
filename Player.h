@@ -16,6 +16,13 @@ enum CLUB
     SMALLCLUB,
 };
 
+enum CAMERA
+{
+    PLAYER,
+    STAGESENTER,
+    MAX_CAMERA
+};
+
 class Player :
     public GameObject
 {
@@ -27,16 +34,19 @@ public:
     void Draw() override;
     void Release() override;
     void OnCollision(GameObject* pTarget) override;
-    bool IsShoot() { return isShoot_; }
-    int GetClub() { return club_; }
+    bool IsShoot() const { return isShoot_; }
+    int GetClub() const { return club_; }
     void SetRange(int range);
+    CAMERA CameraMode() const { return camTargetNow_; }
     
 private:
     void ChangeClub();
+    void ChangeCamera();
 
     int hModel_;
     std::vector<float> powerRate_;
     int rangeNum_;
+    MyStruct csvSenterVal_;//ステージオブジェトの中央の値
     MyStruct velocity;
     CLUB club_;
 
@@ -50,5 +60,6 @@ private:
     bool isFly_;//ボールが上に飛んでいないか
     //bool isRool_;//ボールが転がっているかいないか
     bool isTreeHit_;
+    CAMERA camTargetNow_;
 };
 
