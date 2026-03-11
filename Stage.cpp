@@ -41,18 +41,17 @@ void Stage::Initialize()
 	csv.Load("Stage00.csv");
 	int w = csv.GetWidth();
 	int h = csv.GetHeight();
-	for (int y = 0; y < h; y++)
+	for (int cy = 0; cy < h; cy++)
 	{
-		for (int x = 0; x < w; x++)
+		for (int cx = 0; cx < w; cx++)
 		{
-			if (csv.GetValue(x, y) == 1)
+			if (csv.GetValue(cx, cy) == 1)
 			{
 				Tree* tree = Instantiate<Tree>(this);
-				int tposX = (10.0f * x + tree->GetScale().x);
-				int tposY = 0.0f;
-				int tposZ = -(10.0f * y + tree->GetScale().z);
 				Transform tpos;
-				tpos.position_ = XMFLOAT3(tposX, tposY, tposZ);
+				tpos.position_.x = (10.0f * cx + tree->GetScale().x);
+				tpos.position_.y = 0.0f;
+				tpos.position_.z = -(10.0f * cy + tree->GetScale().z);
 				RayCastData data;
 				float rayStart = 20.0f;
 				data.start = tpos.position_;   //ƒŒƒC‚Ì”­ŽËˆÊ’u
@@ -70,17 +69,23 @@ void Stage::Initialize()
 				//tree->SetPosition(tposX, 0.0f, tposZ);
 				tree->SetPosition(tpos.position_);
 			}
-			else if (csv.GetValue(x, y) == 10)
+			else if (csv.GetValue(cx, cy) == 10)
 			{
 				Goal* goal = Instantiate<Goal>(this);
-				int gposX = (10.0f * x + goal->GetScale().x);
-				int gposZ = -(10.0f * y + goal->GetScale().z);
+				float gposX = (10.0f * cx + goal->GetScale().x);
+				float gposZ = -(10.0f * cy + goal->GetScale().z);
 				goal->SetPosition(gposX, 0.0f, gposZ);
+			}
+			else if (csv.GetValue(cx, cy) == 21)
+			{
+				Area* area = Instantiate<Area>(this);
+				float aposX = (10.0f * cx + area->GetScale().x);
+				float aposY = 0.2f;
+				float aposZ = -(10.0f * cy + area->GetScale().z);
+				area->SetPosition(aposX, aposY, aposZ);
 			}
 		}
 	}
-
-	Instantiate<Area>(this);
 }
 
 void Stage::Update()

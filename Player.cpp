@@ -258,7 +258,7 @@ void Player::Update()
 
 	switch (camTargetNow_)
 	{
-	case PLAYER:
+	case PLAYER://プレイヤーを中心に見た視点
 		vCam = { 0,2.0f,-9.0f,0 };
 		vCam = XMVector3TransformCoord(vCam, mRotate);
 		XMStoreFloat3(&camPos, vPos + vCam);
@@ -266,14 +266,12 @@ void Player::Update()
 		CamTarget = transform_.position_;
 		Camera::SetTarget(CamTarget);
 		break;
-	case STAGESENTER:
-		//ステージを上から見た視点
+	case STAGESENTER://ステージを上から見た視点
 		camPosY = 300.0f;
 		vCam = { 10.0f * csvSenterVal_.x,camPosY,-10.0f * csvSenterVal_.z,0.0f };
-		camPos;
 		XMStoreFloat3(&camPos, vCam);
 		Camera::SetPosition(camPos);
-		CamTarget = { 10.0f * csvSenterVal_.x, 0.0f, (-10.0f + 1.0f) * csvSenterVal_.z };
+		CamTarget = XMFLOAT3(10.0f * csvSenterVal_.x, 0.0f, (-10.0f + 1.0f) * csvSenterVal_.z);
 		Camera::SetTarget(CamTarget);
 		break;
 	default:

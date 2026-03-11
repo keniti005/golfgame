@@ -16,7 +16,6 @@ void Area::Initialize()
 	transform_.scale_.x = 1.0f;
 	transform_.scale_.y = 1.0f;
 	transform_.scale_.z = 1.0f;
-	transform_.position_.y += 0.2f;
 	std::vector<std::string> fileName =
 	{
 		"lakeArea.fbx"
