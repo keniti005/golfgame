@@ -20,19 +20,23 @@ void Stage::Initialize()
 	transform_.scale_.x = 1.0f;
 	transform_.scale_.y = 1.0f;
 	transform_.scale_.z = 1.0f;
-	//std::vector<std::string> fileName =
-	//{
-	//	"ground.fbx",
-	//	"outGround.fbx"
-	//};
-	//for (int i = 0; i < fileName.size(); i++)
-	//{
-	//	hModels_.push_back(Model::Load(fileName[i]));
-	//	assert(hModels_[i] > 0);
-	//}
+	std::vector<std::string> fileName =
+	{
+		"ground.fbx",
+		"outGround.fbx"
+	};
+	for (int i = 0; i < fileName.size(); i++)
+	{
+		hModels_.push_back(Model::Load(fileName[i]));
+		assert(hModels_[i] > 0);
+		if (fileName[i] == "ground.fbx")
+		{
+			hModel_ = hModels_[i];
+		}
+	}
 	//transform_.position_.y = -2.0f;
-	hModel_ = Model::Load("ground.fbx");
-	assert(hModel_ >= 0);
+	//hModel_ = Model::Load("ground.fbx");
+	//assert(hModel_ >= 0);
 	CsvReader csv;
 	csv.Load("Stage00.csv");
 	int w = csv.GetWidth();
@@ -85,13 +89,13 @@ void Stage::Update()
 
 void Stage::Draw()
 {
-	//for(int i = 0; i < hModels_.size();i++)
-	//{
-	//	Model::SetTransform(hModels_[i], transform_);
-	//	Model::Draw(hModels_[i]);
-	//}
-	Model::SetTransform(hModel_, transform_);
-	Model::Draw(hModel_);
+	for(int i = 0; i < hModels_.size();i++)
+	{
+		Model::SetTransform(hModels_[i], transform_);
+		Model::Draw(hModels_[i]);
+	}
+	//Model::SetTransform(hModel_, transform_);
+	//Model::Draw(hModel_);
 }
 
 void Stage::Release()
