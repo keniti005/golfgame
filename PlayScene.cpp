@@ -37,7 +37,7 @@ void PlayScene::Update()
 		{
 			goalTimer = 0.0f;
 			SceneManager* scene = (SceneManager*)FindObject("SceneManager");
-			scene->ChangeScene(SCENE_ID_TEST);
+			scene->ChangeScene(SCENE_ID_RESULT);
 		}
 	}
 	pt = ct;
