@@ -36,6 +36,7 @@ public:
     void OnCollision(GameObject* pTarget) override;
     bool IsShoot() const { return isShoot_; }
     int GetClub() const { return club_; }
+    int Getturns() const { return turns_; }
     void SetRange(int range);
     CAMERA CameraMode() const { return camTargetNow_; }
     
@@ -49,6 +50,7 @@ private:
     MyStruct csvSenterVal_;//ステージオブジェトの中央の値
     MyStruct velocity;
     CLUB club_;
+    int turns_;
 
     float mass_;//質量
     float force_;//力

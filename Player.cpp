@@ -13,7 +13,7 @@
 Player::Player(GameObject* parent)
 	:GameObject(parent, "Player"),hModel_(-1), mass_(0.5f), force_(0.0f), friction_(-1.1f), gravity_(-5.8f)
 	, velocity{ 0.0f,0.0f,0.0f }, vy(0.0f), isShoot_(false), isFly_(false), isTreeHit_(false), club_(IRONCLUB)
-	, rangeNum_(0), csvSenterVal_{ 0.0f,0.0f,0.0f }, camTargetNow_(PLAYER)
+	, rangeNum_(0), csvSenterVal_{ 0.0f,0.0f,0.0f }, camTargetNow_(PLAYER),turns_(0)
 {
 }
 
@@ -107,6 +107,7 @@ void Player::Update()
 			vy = velocity.y * sinf(45.0f) + gravity_ * dt;//Î•û“ŠË
 			isFly_ = true;
 			isShoot_ = true;
+			turns_++;//ƒ^[ƒ“”‰ÁZ
 		}
 	}
 	else

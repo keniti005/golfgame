@@ -1,4 +1,5 @@
 #include "ResultScene.h"
+#include "Player.h"
 #include "Engine/Input.h"
 #include "Engine/SceneManager.h"
 #include <string>
@@ -30,8 +31,10 @@ void ResultScene::Update()
 void ResultScene::Draw()
 {
 	std::string resultString = ("Push SPACE Title");
+	std::string turnsStirng = ("turnsNum:");
 	pText_->Draw(64, 64, "ResultScene");
 	pText_->Draw((1280 / 2.0f) - resultString.size() * 16 / 2.0f, (720 / 2.0f), resultString.c_str());
+	pText_->Draw((1280 / 2.0f) - turnsStirng.size() * 16 / 2.0f, (720 / 2.0f)- 16 * 2, turnsStirng.c_str());
 }
 
 //ŠJ•ú
