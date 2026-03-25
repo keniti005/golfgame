@@ -30,8 +30,10 @@ void ResultScene::Update()
 //•`‰æ
 void ResultScene::Draw()
 {
+	Player* pPlayer = (Player*)FindObject("Player");
 	std::string resultString = ("Push SPACE Title");
 	std::string turnsStirng = ("turnsNum:");
+	//std::string turnsStirng = ("turnsNum:" + std::to_string(pPlayer->Getturns()));
 	pText_->Draw(64, 64, "ResultScene");
 	pText_->Draw((1280 / 2.0f) - resultString.size() * 16 / 2.0f, (720 / 2.0f), resultString.c_str());
 	pText_->Draw((1280 / 2.0f) - turnsStirng.size() * 16 / 2.0f, (720 / 2.0f)- 16 * 2, turnsStirng.c_str());
