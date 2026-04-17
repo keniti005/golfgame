@@ -1,7 +1,7 @@
 #include "Stage.h"
 #include "Engine/Model.h"
 #include "Tree.h"
-#include "Area.h"
+#include "LakeArea.h"
 #include "Goal.h"
 #include "Engine/CsvReader.h"
 #include <string>
@@ -63,7 +63,6 @@ void Stage::Initialize()
 				if (data.hit)
 				{
 					//‚»‚Ì•ªˆÊ’u‚ð‰º‚°‚é
-					//transform_.position_.y = -data.dist + data.start.y;
 					tpos.position_.y = -data.dist + data.start.y;
 				}
 				//tree->SetPosition(tposX, 0.0f, tposZ);
@@ -78,11 +77,11 @@ void Stage::Initialize()
 			}
 			else if (csv.GetValue(cx, cy) == 21)
 			{
-				Area* area = Instantiate<Area>(this);
-				float aposX = (10.0f * cx + area->GetScale().x);
-				float aposY = 0.2f;
-				float aposZ = -(10.0f * cy + area->GetScale().z);
-				area->SetPosition(aposX, aposY, aposZ);
+				LakeArea* lakeArea = Instantiate<LakeArea>(this);
+				float aposX = (10.0f * cx + lakeArea->GetScale().x);
+				float aposY = 0.3f;
+				float aposZ = -(10.0f * cy + lakeArea->GetScale().z);
+				lakeArea->SetPosition(aposX, aposY, aposZ);
 			}
 		}
 	}

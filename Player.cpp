@@ -1,6 +1,5 @@
 #include "Player.h"
 #include "Stage.h"
-#include "Area.h"
 #include "Goal.h"
 #include "Tree.h"
 #include "Engine/Model.h"
@@ -116,7 +115,7 @@ void Player::Update()
 		{
 			if (force_ > 0)
 			{
-				force_ += friction_ * dt;
+				force_ += friction_ * dt;//減速
 			}
 			else
 			{
@@ -125,7 +124,8 @@ void Player::Update()
 				isTreeHit_ = false;
 			}
 		}
-
+		
+		//最高スピード
 		if (force_ > MAX_SPEED)
 		{
 			force_ = MAX_SPEED;
@@ -182,6 +182,7 @@ void Player::Update()
 		//transform_.position_.y = -data.dist + data.start.y;
 		tStage.position_.y = -data.dist + data.start.y;
 	}
+
 	if (transform_.position_.y <= tStage.position_.y)
 	{
 		vy = 0.0f;
@@ -300,6 +301,10 @@ void Player::OnCollision(GameObject* pTarget)
 	if (pTarget->GetObjectName() == "Goal")
 	{
 		force_ = 0.0f;
+	}
+	if (pTarget->GetObjectName() == "LakeArea")
+	{
+
 	}
 }
 

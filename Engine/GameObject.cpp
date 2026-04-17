@@ -192,6 +192,15 @@ void GameObject::KillAllChildren(void)
 	childList_.clear();
 }
 
+float GameObject::deltaTime()
+{
+	static float pt = timeGetTime();
+	float ct = timeGetTime();
+	float dt = (ct - pt) / 1000.0f;
+	pt = ct;
+	return dt;
+}
+
 //オブジェクト削除（再帰）
 void GameObject::KillObjectSub(GameObject * obj)
 {

@@ -115,7 +115,7 @@ void UI::Draw()
 		Image::SetTransform(hClubPict_[currentClub], tClub);
 		Image::Draw(hClubPict_[currentClub]);
 	}
-	if (pPlayer->IsShoot())
+	if (pPlayer->IsShoot())//–îˆó‚ÌˆÊ’u‚ğ‰Šú‰»
 	{
 		tArow.position_.y = tHitMeta.position_.y - 0.3f;
 	}

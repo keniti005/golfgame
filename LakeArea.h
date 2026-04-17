@@ -1,18 +1,17 @@
 #pragma once
 #include "Engine/GameObject.h"
-#include <vector>
 
-class Area :
+class LakeArea :
 	public GameObject
 {
 public:
-	Area(GameObject* parent);
-	~Area();
+	LakeArea(GameObject* parent);
+	~LakeArea();
 	void Initialize() override;
 	void Update() override;
 	void Draw() override;
 	void Release() override;
-	std::vector<int> GetModelHandles() { return hModels_; }
+	int GetModelHandles() { return hModel_; }
 private:
-	std::vector<int> hModels_;
+	int hModel_;
 };
