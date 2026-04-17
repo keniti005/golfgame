@@ -74,9 +74,7 @@ void Player::Update()
 
 	XMVECTOR vPos = XMLoadFloat3(&transform_.position_);
 #if true
-	static float pt = timeGetTime();
-	float ct = timeGetTime();
-	float dt = (ct - pt) / 1000.0f;
+	float dt = deltaTime();
 	const float MAX_SPEED = 3.0f;
 	ChangeClub();
 
@@ -132,9 +130,6 @@ void Player::Update()
 		}
 	}
 
-	pt = ct;
-
-
 	XMVECTOR vMoveY = XMVectorSet(0, vy, 0, 0);
 	XMVECTOR vMoveZ = XMVectorSet(0, 0, force_, 0);
 
@@ -143,7 +138,7 @@ void Player::Update()
 	//OutputDebugStringA(("force_:" + std::to_string(force_) + "\n").c_str());
 	//OutputDebugStringA(("vy:" + std::to_string(vy) + "\n").c_str());
 	//OutputDebugStringA(("position_.y:" + std::to_string(transform_.position_.y) + "\n").c_str());
-	//OutputDebugStringA(("Timer:" + std::to_string(goalTimer) + "\n").c_str());
+	OutputDebugStringA(("Timer:" + std::to_string(dt) + "\n").c_str());
 	//OutputDebugStringA(("range:" + std::to_string(rangeNum_) + "\n").c_str());
 
 	vPos += vMoveY;
