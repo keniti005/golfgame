@@ -102,6 +102,7 @@ void Player::Update()
 			force_ = (velocity.z * powerRate_[rangeNum_]) * mass_;//運動方程式
 			vy = velocity.y * sinf(45.0f) + gravity_ * dt;//斜方投射
 			isShoot_ = true;
+			isFly_ = true;
 			turns_++;//ターン数加算
 		}
 	}
@@ -112,17 +113,15 @@ void Player::Update()
 		{
 			force_ += friction_ * dt;//減速
 		}
-		else
+		else//プレイヤーが止まったら値やフラグの初期化	
 		{
 			force_ = 0.0f;
+			vy = 0.0f;
 			isShoot_ = false;
 			isTreeHit_ = false;
 		}
 	}
-	else
-	{
-		vy += gravity_ * dt;//落下
-	}
+	vy += gravity_ * dt;//落下
 	
 	//最高スピード
 	if (force_ > MAX_SPEED)
@@ -279,10 +278,6 @@ void Player::HitRayCast(int hModel)
 	{
 		transform_.position_.y = tModel.position_.y;
 		isFly_ = false;
-	}
-	else
-	{
-		isFly_ = true;
 	}
 }
 
