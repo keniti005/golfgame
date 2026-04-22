@@ -114,7 +114,6 @@ void Player::Update()
 		}
 		else
 		{
-			vy = 0.0f;
 			force_ = 0.0f;
 			isShoot_ = false;
 			isTreeHit_ = false;
@@ -209,6 +208,7 @@ void Player::Update()
 	XMFLOAT3 camPos;
 	XMFLOAT3 CamTarget;
 	float camPosY;
+	vPos = XMLoadFloat3(&transform_.position_);
 
 	switch (camTargetNow_)
 	{
@@ -279,7 +279,6 @@ void Player::HitRayCast(int hModel)
 	{
 		transform_.position_.y = tModel.position_.y;
 		isFly_ = false;
-		vy = 0.0f;
 	}
 	else
 	{
