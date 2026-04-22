@@ -1,5 +1,6 @@
 #pragma once
 #include "Engine/GameObject.h"
+#include "Engine/Model.h"
 #include <vector>
 
 struct MyStruct
@@ -38,7 +39,9 @@ public:
     int GetClub() const { return club_; }
     int Getturns() const { return turns_; }
     void SetRange(int range);
+    void HitRayCast(int hModel);
     CAMERA CameraMode() const { return camTargetNow_; }
+
     
 private:
     void ChangeClub();

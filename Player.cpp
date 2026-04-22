@@ -2,7 +2,6 @@
 #include "Stage.h"
 #include "Goal.h"
 #include "Tree.h"
-#include "Engine/Model.h"
 #include "Engine/Input.h"
 #include "Engine/Camera.h"
 #include "Engine/CsvReader.h"
@@ -74,8 +73,8 @@ void Player::Update()
 
 	XMVECTOR vPos = XMLoadFloat3(&transform_.position_);
 #if true
-	float dt = deltaTime();
 	const float MAX_SPEED = 3.0f;
+	float dt = deltaTime();
 	ChangeClub();
 
 	switch (club_)
@@ -102,32 +101,34 @@ void Player::Update()
 		{
 			force_ = (velocity.z * powerRate_[rangeNum_]) * mass_;//運動方程式
 			vy = velocity.y * sinf(45.0f) + gravity_ * dt;//斜方投射
-			isFly_ = true;
 			isShoot_ = true;
 			turns_++;//ターン数加算
 		}
 	}
+
+	if (!(isFly_))
+	{
+		if (force_ > 0)
+		{
+			force_ += friction_ * dt;//減速
+		}
+		else
+		{
+			vy = 0.0f;
+			force_ = 0.0f;
+			isShoot_ = false;
+			isTreeHit_ = false;
+		}
+	}
 	else
 	{
-		if (!(isFly_))
-		{
-			if (force_ > 0)
-			{
-				force_ += friction_ * dt;//減速
-			}
-			else
-			{
-				force_ = 0.0f;
-				isShoot_ = false;
-				isTreeHit_ = false;
-			}
-		}
-		
-		//最高スピード
-		if (force_ > MAX_SPEED)
-		{
-			force_ = MAX_SPEED;
-		}
+		vy += gravity_ * dt;//落下
+	}
+	
+	//最高スピード
+	if (force_ > MAX_SPEED)
+	{
+		force_ = MAX_SPEED;
 	}
 
 	XMVECTOR vMoveY = XMVectorSet(0, vy, 0, 0);
@@ -138,7 +139,7 @@ void Player::Update()
 	//OutputDebugStringA(("force_:" + std::to_string(force_) + "\n").c_str());
 	//OutputDebugStringA(("vy:" + std::to_string(vy) + "\n").c_str());
 	//OutputDebugStringA(("position_.y:" + std::to_string(transform_.position_.y) + "\n").c_str());
-	OutputDebugStringA(("Timer:" + std::to_string(dt) + "\n").c_str());
+	//OutputDebugStringA(("Timer:" + std::to_string(dt) + "\n").c_str());
 	//OutputDebugStringA(("range:" + std::to_string(rangeNum_) + "\n").c_str());
 
 	vPos += vMoveY;
@@ -156,59 +157,15 @@ void Player::Update()
 	}
 	XMStoreFloat3(&transform_.position_, vPos);
 
-
-	RayCastData data;
-	float rayStart = 20.0f;
-	data.start = transform_.position_;   //レイの発射位置
-	data.start.y = rayStart;
-
 	//ステージ上のレイキャスト
-	Stage* pStage = (Stage*)FindObject("Stage");    //ステージオブジェクトを探す
-	int hStageModel = pStage->GetModelHandle();    //モデル番号を取得
-
-	data.dir = XMFLOAT3(0, -1, 0);       //レイの方向
-	Model::RayCast(hStageModel, &data); //レイを発射
-
-	Transform tStage;
-	//レイが当たったら
-	if (data.hit)
-	{
-		//その分位置を下げる
-		//transform_.position_.y = -data.dist + data.start.y;
-		tStage.position_.y = -data.dist + data.start.y;
-	}
-
-	if (transform_.position_.y <= tStage.position_.y)
-	{
-		vy = 0.0f;
-		transform_.position_.y = tStage.position_.y;
-		isFly_ = false;
-	}
-	else
-	{
-		vy += gravity_ * dt;
-	}
+	Stage* pStage = (Stage*)FindObject("Stage");//ステージオブジェクトを探す
+	int hStageModel = pStage->GetModelHandle();//モデル番号を取得
+	HitRayCast(hStageModel);
 
 	//ゴール地点のレイキャスト
 	Goal* pGoal = (Goal*)FindObject("Goal");    //ステージオブジェクトを探す
 	int hGoalModel = pGoal->GetModelHandle();    //モデル番号を取得
-	data.dir = XMFLOAT3(0, -1, 0);       //レイの方向
-	Model::RayCast(hGoalModel, &data); //レイを発射
-
-	Transform tGoal;
-	//レイが当たったら
-	if (data.hit)
-	{
-		//その分位置を下げる
-		//transform_.position_.y = -data.dist + data.start.y;
-		tGoal.position_.y = -data.dist + data.start.y;
-		if (transform_.position_.y <= tGoal.position_.y)
-		{
-			vy = 0.0f;
-			transform_.position_.y = tGoal.position_.y;
-			isFly_ = false;
-		}
-	}
+	HitRayCast(hGoalModel);
 
 #else//デバッグ用
 	XMVECTOR vMoveY = XMVectorSet(0, 0.4f, 0, 0);
@@ -259,7 +216,7 @@ void Player::Update()
 		vCam = { 0,2.0f,-9.0f,0 };
 		vCam = XMVector3TransformCoord(vCam, mRotate);
 		XMStoreFloat3(&camPos, vPos + vCam);
-		Camera::SetPosition(camPos);
+		Camera::SetPosition(XMFLOAT3(camPos));
 		CamTarget = transform_.position_;
 		Camera::SetTarget(CamTarget);
 		break;
@@ -297,16 +254,37 @@ void Player::OnCollision(GameObject* pTarget)
 	{
 		force_ = 0.0f;
 	}
-	if (pTarget->GetObjectName() == "LakeArea")
-	{
-
-	}
 }
 
 void Player::SetRange(int range)
 {
 	//配列の範囲内に設定するため-1
 	rangeNum_ = range - 1;
+}
+
+void Player::HitRayCast(int hModel)
+{
+	RayCastData data;
+	Transform tModel;
+	float rayStart = 20.0f;
+	data.start = transform_.position_;
+	data.start.y = transform_.position_.y + rayStart;
+	data.dir = XMFLOAT3(0, -1, 0);
+	Model::RayCast(hModel, &data);
+	if (data.hit)
+	{
+		tModel.position_.y = -data.dist + data.start.y;
+	}
+	if (transform_.position_.y <= tModel.position_.y)
+	{
+		transform_.position_.y = tModel.position_.y;
+		isFly_ = false;
+		vy = 0.0f;
+	}
+	else
+	{
+		isFly_ = true;
+	}
 }
 
 void Player::ChangeClub()
