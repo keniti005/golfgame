@@ -109,6 +109,9 @@
     <ClCompile Include="LakeArea.cpp">
       <Filter>Area</Filter>
     </ClCompile>
+    <ClCompile Include="SandArea.cpp">
+      <Filter>Area</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Engine\BoxCollider.h">
@@ -189,6 +192,9 @@
     <ClInclude Include="UI.h" />
     <ClInclude Include="ResultScene.h" />
     <ClInclude Include="LakeArea.h">
+      <Filter>Area</Filter>
+    </ClInclude>
+    <ClInclude Include="SandArea.h">
       <Filter>Area</Filter>
     </ClInclude>
   </ItemGroup>

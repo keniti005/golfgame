@@ -68,6 +68,7 @@ private:
     //bool isRool_;//ƒ{[ƒ‹‚ª“]‚ª‚Á‚Ä‚¢‚é‚©‚¢‚È‚¢‚©
     bool isTreeHit_;
 	bool isLakeAreaHit_;
+	bool isSandAreaHit_;
     CAMERA camTargetNow_;
 };
 

@@ -130,7 +130,6 @@ void Player::Update()
 		force_ = MAX_SPEED;
 	}
 
-
 	if (isLakeAreaHit_)
 	{
 		//リスポーン地点に移動
@@ -147,9 +146,15 @@ void Player::Update()
 		OutputDebugStringA(("Timer:" + std::to_string(timer) + "\n").c_str());
 	}
 
+	if (isSandAreaHit_)
+	{
+		force_ *= 0.8f;
+	}
+
 	//エリア判定リセット
 	{
 		isLakeAreaHit_ = false;
+		isSandAreaHit_ = false;
 	}
 
 	XMVECTOR vMoveY = XMVectorSet(0, vy, 0, 0);
@@ -283,6 +288,10 @@ void Player::OnCollision(GameObject* pTarget)
 	if (pTarget->GetObjectName() == "LakeArea")
 	{
 		isLakeAreaHit_ = true;
+	}
+	if (pTarget->GetObjectName() == "SandArea")
+	{
+		isSandAreaHit_ = true;
 	}
 }
 

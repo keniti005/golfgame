@@ -2,6 +2,7 @@
 #include "Engine/Model.h"
 #include "Tree.h"
 #include "LakeArea.h"
+#include "sandArea.h"
 #include "Goal.h"
 #include "Engine/CsvReader.h"
 #include <string>
@@ -82,6 +83,14 @@ void Stage::Initialize()
 				float aposY = 0.3f;
 				float aposZ = -(10.0f * cy + lakeArea->GetScale().z);
 				lakeArea->SetPosition(aposX, aposY, aposZ);
+			}
+			else if (csv.GetValue(cx, cy) == 22)
+			{
+				SandArea* sandArea = Instantiate<SandArea>(this);
+				float sposX = (10.0f * cx + sandArea->GetScale().x);
+				float sposY = 0.3f;
+				float sposZ = -(10.0f * cy + sandArea->GetScale().z);
+				sandArea->SetPosition(sposX, sposY, sposZ);
 			}
 		}
 	}
