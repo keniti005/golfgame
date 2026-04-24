@@ -35,23 +35,25 @@ public:
     void Draw() override;
     void Release() override;
     void OnCollision(GameObject* pTarget) override;
+
     bool IsShoot() const { return isShoot_; }
     int GetClub() const { return club_; }
-    int Getturns() const { return turns_; }
     void SetRange(int range);
-    void HitRayCast(int hModel);
     CAMERA CameraMode() const { return camTargetNow_; }
 
+    int Getturns() const { return turns_; }
     
 private:
     void ChangeClub();
     void ChangeCamera();
+    void HitRayCast(int hModel);
 
     int hModel_;
     std::vector<float> powerRate_;
     int rangeNum_;
     MyStruct csvSenterVal_;//ステージオブジェトの中央の値
-    MyStruct velocity;
+    MyStruct velocity_;
+	XMFLOAT3 respawnPos_;//リスポーン地点
     CLUB club_;
     int turns_;
 
@@ -65,6 +67,7 @@ private:
     bool isFly_;//ボールが上に飛んでいないか
     //bool isRool_;//ボールが転がっているかいないか
     bool isTreeHit_;
+	bool isLakeAreaHit_;
     CAMERA camTargetNow_;
 };
 

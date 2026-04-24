@@ -1,7 +1,6 @@
 #include "Player.h"
 #include "Stage.h"
 #include "Goal.h"
-#include "Tree.h"
 #include "Engine/Input.h"
 #include "Engine/Camera.h"
 #include "Engine/CsvReader.h"
@@ -10,7 +9,7 @@
 
 Player::Player(GameObject* parent)
 	:GameObject(parent, "Player"),hModel_(-1), mass_(0.5f), force_(0.0f), friction_(-1.1f), gravity_(-5.8f)
-	, velocity{ 0.0f,0.0f,0.0f }, vy(0.0f), isShoot_(false), isFly_(false), isTreeHit_(false), club_(IRONCLUB)
+	, velocity_{ 0.0f,0.0f,0.0f }, vy(0.0f), isShoot_(false), isFly_(false), isTreeHit_(false), club_(IRONCLUB)
 	, rangeNum_(0), csvSenterVal_{ 0.0f,0.0f,0.0f }, camTargetNow_(PLAYER),turns_(0)
 {
 }
@@ -80,16 +79,16 @@ void Player::Update()
 	switch (club_)
 	{
 	case IRONCLUB:
-		velocity.y = 2.0f;
-		velocity.z = 3.0f;
+		velocity_.y = 2.0f;
+		velocity_.z = 3.0f;
 		break;
 	case WOODENCLUB:
-		velocity.y = 3.5f;
-		velocity.z = 1.5f;
+		velocity_.y = 3.5f;
+		velocity_.z = 1.5f;
 		break;
 	case SMALLCLUB:
-		velocity.y = 0.0f;
-		velocity.z = 2.7f;
+		velocity_.y = 0.0f;
+		velocity_.z = 2.7f;
 		break;
 	default:
 		break;
@@ -99,8 +98,9 @@ void Player::Update()
 	{
 		if (Input::IsKeyDown(DIK_SPACE) && camTargetNow_ == PLAYER)
 		{
-			force_ = (velocity.z * powerRate_[rangeNum_]) * mass_;//運動方程式
-			vy = velocity.y * sinf(45.0f) + gravity_ * dt;//斜方投射
+			respawnPos_ = transform_.position_;//リスポーン地点の設定
+			force_ = (velocity_.z * powerRate_[rangeNum_]) * mass_;//運動方程式
+			vy = velocity_.y * sinf(45.0f) + gravity_ * dt;//斜方投射
 			isShoot_ = true;
 			isFly_ = true;
 			turns_++;//ターン数加算
@@ -113,8 +113,9 @@ void Player::Update()
 		{
 			force_ += friction_ * dt;//減速
 		}
-		else//プレイヤーが止まったら値やフラグの初期化	
+		else if (!(isLakeAreaHit_))//名前をイベント系の名前に変更する
 		{
+			//プレイヤーの値やフラグを初期化
 			force_ = 0.0f;
 			vy = 0.0f;
 			isShoot_ = false;
@@ -129,6 +130,28 @@ void Player::Update()
 		force_ = MAX_SPEED;
 	}
 
+
+	if (isLakeAreaHit_)
+	{
+		//リスポーン地点に移動
+		force_ = 0.0f;
+		vy = 0.0f;
+		static float timer = 0.0f;
+		timer += dt;
+		if (timer > 3.0f)
+		{
+			transform_.position_ = respawnPos_;
+			vPos = XMLoadFloat3(&transform_.position_);
+			timer = 0.0f;
+		}
+		OutputDebugStringA(("Timer:" + std::to_string(timer) + "\n").c_str());
+	}
+
+	//エリア判定リセット
+	{
+		isLakeAreaHit_ = false;
+	}
+
 	XMVECTOR vMoveY = XMVectorSet(0, vy, 0, 0);
 	XMVECTOR vMoveZ = XMVectorSet(0, 0, force_, 0);
 
@@ -139,6 +162,7 @@ void Player::Update()
 	//OutputDebugStringA(("position_.y:" + std::to_string(transform_.position_.y) + "\n").c_str());
 	//OutputDebugStringA(("Timer:" + std::to_string(dt) + "\n").c_str());
 	//OutputDebugStringA(("range:" + std::to_string(rangeNum_) + "\n").c_str());
+	//OutputDebugStringA(("AreaHit:" + std::to_string(isLakeAreaHit_) + "\n").c_str());
 
 	vPos += vMoveY;
 	if (isTreeHit_)
@@ -212,7 +236,7 @@ void Player::Update()
 	switch (camTargetNow_)
 	{
 	case PLAYER://プレイヤーを中心に見た視点
-		vCam = { 0,2.0f,-9.0f,0 };
+		vCam = { 0,4.0f,-11.0f,0 };
 		vCam = XMVector3TransformCoord(vCam, mRotate);
 		XMStoreFloat3(&camPos, vPos + vCam);
 		Camera::SetPosition(XMFLOAT3(camPos));
@@ -235,8 +259,11 @@ void Player::Update()
 void Player::Draw()
 {
 	Model::SetTransform(hModel_, transform_);
-	Model::Draw(hModel_);
-	CollisionDraw();
+	if (!(isLakeAreaHit_))
+	{
+		Model::Draw(hModel_);
+		CollisionDraw();
+	}
 }
 
 void Player::Release()
@@ -252,6 +279,10 @@ void Player::OnCollision(GameObject* pTarget)
 	if (pTarget->GetObjectName() == "Goal")
 	{
 		force_ = 0.0f;
+	}
+	if (pTarget->GetObjectName() == "LakeArea")
+	{
+		isLakeAreaHit_ = true;
 	}
 }
 
