@@ -9,8 +9,9 @@
 
 Player::Player(GameObject* parent)
 	:GameObject(parent, "Player"),hModel_(-1), mass_(0.5f), force_(0.0f), friction_(-1.1f), gravity_(-5.8f)
-	, velocity_{ 0.0f,0.0f,0.0f }, vy(0.0f), isShoot_(false), isFly_(false), isTreeHit_(false), club_(IRONCLUB)
-	, rangeNum_(0), csvSenterVal_{ 0.0f,0.0f,0.0f }, camTargetNow_(PLAYER),turns_(0)
+	, velocity_{ 0.0f,0.0f,0.0f }, vy(0.0f), club_(IRONCLUB), rangeNum_(0), csvSenterVal_{ 0.0f,0.0f,0.0f }
+	, camTargetNow_(PLAYER), turns_(0), respawnPos_(0.0f, 0.0f, 0.0f), isShoot_(false), isFly_(false)
+	, isTreeHit_(false), isLakeAreaHit_(false), isSandAreaHit_(false)
 {
 }
 
@@ -143,7 +144,6 @@ void Player::Update()
 			vPos = XMLoadFloat3(&transform_.position_);
 			timer = 0.0f;
 		}
-		OutputDebugStringA(("Timer:" + std::to_string(timer) + "\n").c_str());
 	}
 
 	if (isSandAreaHit_)
@@ -176,12 +176,9 @@ void Player::Update()
 		XMVECTOR normal = XMVectorSet(0.0f, 0.0f, 1.0f, 0.0f);
 		XMVector3Normalize(normal);
 		vMoveZ = vMoveZ - 1.5f * XMVector3Dot(vMoveZ, normal) * normal;
-		vPos += vMoveZ;
 	}
-	else
-	{
-		vPos += vMoveZ;
-	}
+
+	vPos += vMoveZ;
 	XMStoreFloat3(&transform_.position_, vPos);
 
 	//ステージ上のレイキャスト
@@ -267,8 +264,8 @@ void Player::Draw()
 	if (!(isLakeAreaHit_))
 	{
 		Model::Draw(hModel_);
-		CollisionDraw();
 	}
+	CollisionDraw();
 }
 
 void Player::Release()
