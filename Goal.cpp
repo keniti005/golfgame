@@ -39,7 +39,7 @@ void Goal::Initialize()
 
 void Goal::Update()
 {
-	if (Input::IsKeyDown(DIK_P))
+	if (Input::IsKeyDown(DIK_P))//デバッグ用でゴール判定にする
 	{
 		isGoal_ = true;
 	}

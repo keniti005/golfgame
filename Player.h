@@ -40,6 +40,7 @@ public:
     int GetClub() const { return club_; }
     void SetRange(int range);
     CAMERA CameraMode() const { return camTargetNow_; }
+    void Save();
 
     int Getturns() const { return turns_; }
     

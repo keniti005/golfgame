@@ -5,7 +5,7 @@
 #include "Engine/Camera.h"
 #include "Engine/CsvReader.h"
 #include "Engine/SphereCollider.h"
-
+#include <fstream>
 
 Player::Player(GameObject* parent)
 	:GameObject(parent, "Player"),hModel_(-1), mass_(0.5f), force_(0.0f), friction_(-1.1f), gravity_(-5.8f)
@@ -69,6 +69,11 @@ void Player::Update()
 	if (Input::IsKey(DIK_A))
 	{
 		transform_.rotate_.y -= 1.2f;
+	}
+
+	if (Input::IsKey(DIK_1))
+	{
+		Save();
 	}
 
 	XMVECTOR vPos = XMLoadFloat3(&transform_.position_);
@@ -316,6 +321,20 @@ void Player::HitRayCast(int hModel)
 		transform_.position_.y = tModel.position_.y;
 		isFly_ = false;
 	}
+}
+
+void Player::Save()
+{
+	std::ofstream ofs("saveData.txt");
+	if (ofs.is_open())
+	{
+		ofs << "テストだよ" << std::endl;
+	}
+	else
+	{
+		OutputDebugStringA("ファイルが開けません");
+	}
+	ofs.close();
 }
 
 void Player::ChangeClub()
