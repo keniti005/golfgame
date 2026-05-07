@@ -23,6 +23,7 @@ private:
 	int hArowPict_;
 	float powerTimer_;
 	std::string clearText_;
+	std::string turnText_;
 	Text* pText_;
 };
 
