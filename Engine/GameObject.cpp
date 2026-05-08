@@ -194,8 +194,8 @@ void GameObject::KillAllChildren(void)
 
 float GameObject::deltaTime()
 {
-	static float pt = timeGetTime();
-	float ct = timeGetTime();
+	static DWORD pt = timeGetTime();
+	DWORD ct = timeGetTime();
 	float dt = (ct - pt) / 1000.0f;
 	pt = ct;
 	return dt;
