@@ -149,7 +149,9 @@ public:
 	void SetScale(float x, float y, float z) { SetScale(XMFLOAT3(x, y, z)); }
 
 	//タイマー関数
-	float deltaTime();
+	float deltaTime()const { return dt_; }
+
+	float dt_;
 
 private:
 

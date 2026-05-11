@@ -192,15 +192,6 @@ void GameObject::KillAllChildren(void)
 	childList_.clear();
 }
 
-float GameObject::deltaTime()
-{
-	static DWORD pt = timeGetTime();
-	DWORD ct = timeGetTime();
-	float dt = (ct - pt) / 1000.0f;
-	pt = ct;
-	return dt;
-}
-
 //オブジェクト削除（再帰）
 void GameObject::KillObjectSub(GameObject * obj)
 {
@@ -304,6 +295,10 @@ void GameObject::UpdateSub()
 {
 	Update();
 	Transform();
+	static DWORD pt = timeGetTime();
+	DWORD ct = timeGetTime();
+	dt_ = (ct - pt) / 1000.0f;
+
 
 	for (auto it = childList_.begin(); it != childList_.end(); it++)
 	{
@@ -325,6 +320,7 @@ void GameObject::UpdateSub()
 			it++;
 		}
 	}
+	pt = ct;
 }
 
 void GameObject::DrawSub()

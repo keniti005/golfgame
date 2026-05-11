@@ -79,7 +79,7 @@ void Player::Update()
 	XMVECTOR vPos = XMLoadFloat3(&transform_.position_);
 #if true
 	const float MAX_SPEED = 3.0f;
-	float dt = deltaTime();
+	//float dt = deltaTime();
 	ChangeClub();
 
 	switch (club_)
@@ -106,7 +106,7 @@ void Player::Update()
 		{
 			respawnPos_ = transform_.position_;//リスポーン地点の設定
 			force_ = (velocity_.z * powerRate_[rangeNum_]) * mass_;//運動方程式
-			vy = velocity_.y * sinf(45.0f) + gravity_ * dt;//斜方投射
+			vy = velocity_.y * sinf(45.0f) + gravity_ * deltaTime();//斜方投射
 			isShoot_ = true;
 			isFly_ = true;
 			turns_++;//ターン数加算
@@ -117,9 +117,9 @@ void Player::Update()
 	{
 		if (force_ > 0)
 		{
-			force_ += friction_ * dt;//減速
+			force_ += friction_ * deltaTime();//減速
 		}
-		else if (!(isLakeAreaHit_))//名前をイベント系の名前に変更する
+		else if (!(isLakeAreaHit_))
 		{
 			//プレイヤーの値やフラグを初期化
 			force_ = 0.0f;
@@ -128,7 +128,7 @@ void Player::Update()
 			isTreeHit_ = false;
 		}
 	}
-	vy += gravity_ * dt;//落下
+	vy += gravity_ * deltaTime();//落下
 	
 	//最高スピード
 	if (force_ > MAX_SPEED)
@@ -142,13 +142,14 @@ void Player::Update()
 		force_ = 0.0f;
 		vy = 0.0f;
 		static float timer = 0.0f;
-		timer += dt;
+		timer += deltaTime();
 		if (timer > 3.0f)
 		{
 			transform_.position_ = respawnPos_;
 			vPos = XMLoadFloat3(&transform_.position_);
 			timer = 0.0f;
 		}
+		OutputDebugStringA(("respwnTimer:" + std::to_string(timer) + "\n").c_str());
 	}
 
 	if (isSandAreaHit_)

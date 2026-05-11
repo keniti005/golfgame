@@ -6,7 +6,7 @@
 
 UI::UI(GameObject* parent)
 	:GameObject(parent, "UI"),clearText_("GameClear"),turnText_("trun:"),
-	pText_(nullptr), hArowPict_(-1), powerTimer_(0.0f), secondTimer(0.0f), minuteTimer(0.0f)
+	pText_(nullptr), hArowPict_(-1), powerTimer_(0.0f)
 {
 }
 
@@ -94,6 +94,8 @@ void UI::Draw()
 	Player* pPlayer = (Player*)FindObject("Player");
 	Goal* pGoal = (Goal*)FindObject("Goal");
 	int currentClub = pPlayer->GetClub();//クラブの種類を取得
+	static float secondTimer = 0.0f;
+	static float minuteTimer = 0.0f;
 	secondTimer += deltaTime();
 
 	if (pGoal->IsGoal())
@@ -123,7 +125,7 @@ void UI::Draw()
 			minuteTimer += 1.0f;
 			secondTimer = 0.0f;
 		}
-		OutputDebugStringA(("timer:" + std::to_string(secondTimer) + "\n").c_str());
+		//OutputDebugStringA(("timer:" + std::to_string(secondTimer) + "\n").c_str());
 		if (secondTimer < 10.0f)
 		{
 			pText_->Draw(50, 50, (std::to_string((int)minuteTimer) + ":0" + std::to_string((int)secondTimer)).c_str());//タイマー表示
