@@ -5,6 +5,7 @@
 #include "Engine/Camera.h"
 #include "Engine/CsvReader.h"
 #include "Engine/SphereCollider.h"
+#include "Engine/Global.h"
 #include <fstream>
 
 Player::Player(GameObject* parent)
@@ -79,7 +80,6 @@ void Player::Update()
 	XMVECTOR vPos = XMLoadFloat3(&transform_.position_);
 #if true
 	const float MAX_SPEED = 3.0f;
-	//float dt = deltaTime();
 	ChangeClub();
 
 	switch (club_)
@@ -129,7 +129,7 @@ void Player::Update()
 		}
 	}
 	vy += gravity_ * deltaTime();//落下
-	
+
 	//最高スピード
 	if (force_ > MAX_SPEED)
 	{

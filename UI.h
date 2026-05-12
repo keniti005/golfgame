@@ -21,7 +21,8 @@ private:
 	Transform tArow;
 	Transform tClub;
 	int hArowPict_;
-	float powerTimer_;
+	float secondTimer_;
+	float minuteTimer_;
 	std::string clearText_;
 	std::string turnText_;
 	Text* pText_;

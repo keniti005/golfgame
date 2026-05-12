@@ -29,7 +29,7 @@ void Stage::Initialize()
 	for (int i = 0; i < fileName.size(); i++)
 	{
 		hModels_.push_back(Model::Load(fileName[i]));
-		assert(hModels_[i] > 0);
+		assert(hModels_[i] >= 0);
 		if (fileName[i] == "ground.fbx")
 		{
 			hModel_ = hModels_[i];

@@ -3,10 +3,11 @@
 #include "Goal.h"
 #include "Engine/Image.h"
 #include "Engine/Input.h"
+#include "Engine/Global.h"
 
 UI::UI(GameObject* parent)
 	:GameObject(parent, "UI"),clearText_("GameClear"),turnText_("trun:"),
-	pText_(nullptr), hArowPict_(-1), powerTimer_(0.0f)
+	pText_(nullptr), hArowPict_(-1), secondTimer_(0.0f), minuteTimer_(0.0f)
 {
 }
 
@@ -87,6 +88,8 @@ void UI::Update()
 			pPlayer->SetRange(1);
 		}
 	}
+	secondTimer_ += deltaTime();
+	OutputDebugStringA(("timer:" + std::to_string(secondTimer_) + "\n").c_str());
 }
 
 void UI::Draw()
@@ -94,9 +97,6 @@ void UI::Draw()
 	Player* pPlayer = (Player*)FindObject("Player");
 	Goal* pGoal = (Goal*)FindObject("Goal");
 	int currentClub = pPlayer->GetClub();//クラブの種類を取得
-	static float secondTimer = 0.0f;
-	static float minuteTimer = 0.0f;
-	secondTimer += deltaTime();
 
 	if (pGoal->IsGoal())
 	{
@@ -119,23 +119,25 @@ void UI::Draw()
 		//クラブの種類を表示
 		Image::SetTransform(hClubPict_[currentClub], tClub);
 		Image::Draw(hClubPict_[currentClub]);
-		//60秒で1分に更新
-		if (secondTimer > 60.0f)
-		{
-			minuteTimer += 1.0f;
-			secondTimer = 0.0f;
-		}
-		//OutputDebugStringA(("timer:" + std::to_string(secondTimer) + "\n").c_str());
-		if (secondTimer < 10.0f)
-		{
-			pText_->Draw(50, 50, (std::to_string((int)minuteTimer) + ":0" + std::to_string((int)secondTimer)).c_str());//タイマー表示
-		}
-		else
-		{
-			pText_->Draw(50, 50, (std::to_string((int)minuteTimer) + ":" + std::to_string((int)secondTimer)).c_str());//タイマー表示
-		}
-		pText_->Draw(50, 100, (turnText_ + std::to_string(pPlayer->Getturns())).c_str());//ターン数表示
 	}
+
+	//60秒で1分に更新
+	if (secondTimer_ > 60.0f)
+	{
+		minuteTimer_ += 1.0f;
+		secondTimer_ = 0.0f;
+	}
+	//pText_->Draw(50, 50, (std::to_string(secondTimer_)).c_str());//タイマー表示
+	if (secondTimer_ < 10.0f)
+	{
+		pText_->Draw(50, 50, (std::to_string((int)minuteTimer_) + ":0" + std::to_string((int)secondTimer_)).c_str());//タイマー表示
+	}
+	else
+	{
+		pText_->Draw(50, 50, (std::to_string((int)minuteTimer_) + ":" + std::to_string((int)secondTimer_)).c_str());//タイマー表示
+	}
+	pText_->Draw(50, 100, (turnText_ + std::to_string(pPlayer->Getturns())).c_str());//ターン数表示
+
 	if (pPlayer->IsShoot())//矢印の位置を初期化
 	{
 		tArow.position_.y = tHitMeta.position_.y - 0.3f;

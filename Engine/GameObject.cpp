@@ -297,8 +297,6 @@ void GameObject::UpdateSub()
 	Transform();
 	static DWORD pt = timeGetTime();
 	DWORD ct = timeGetTime();
-	dt_ = (ct - pt) / 1000.0f;
-
 
 	for (auto it = childList_.begin(); it != childList_.end(); it++)
 	{

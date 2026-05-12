@@ -4,6 +4,7 @@
 #include "Goal.h"
 #include "UI.h"
 #include "Engine/SceneManager.h"
+#include "Engine/Global.h"
 
 PlayScene::PlayScene(GameObject* parent)
 	:GameObject(parent,"PlayScene")
