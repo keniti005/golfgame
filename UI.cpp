@@ -53,6 +53,7 @@ void UI::Update()
 {
 	Player* pPlayer = (Player*)FindObject("Player");
 	float speed = 50.0f;
+	float dt = deltaTime();
 	/*ƒpƒ[”ÍˆÍ
 	Ô	    0.44`0.5 4’iŠK
 	‰©F    0.28`0.44 3’iŠK
@@ -88,7 +89,7 @@ void UI::Update()
 			pPlayer->SetRange(1);
 		}
 	}
-	secondTimer_ += deltaTime();
+	secondTimer_ += dt;
 	OutputDebugStringA(("timer:" + std::to_string(secondTimer_) + "\n").c_str());
 }
 

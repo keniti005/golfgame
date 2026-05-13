@@ -24,13 +24,14 @@ void PlayScene::Initialize()
 
 void PlayScene::Update()
 {
-	static float goalTimer = 0;
+	static float goalTimer = 0.0f;
+	float dt = deltaTime();
 
 	Goal* pGoal = (Goal*)FindObject("Goal");
 	if (pGoal->IsGoal())
 	{
 		//タイマーが5秒経過したらシーン遷移
-		goalTimer += deltaTime();
+		goalTimer += dt;
 		if (goalTimer >= 5.0f)
 		{
 			goalTimer = 0.0f;

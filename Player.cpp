@@ -77,6 +77,7 @@ void Player::Update()
 		Save();
 	}
 
+	float dt = deltaTime();
 	XMVECTOR vPos = XMLoadFloat3(&transform_.position_);
 #if true
 	const float MAX_SPEED = 3.0f;
@@ -117,7 +118,7 @@ void Player::Update()
 	{
 		if (force_ > 0)
 		{
-			force_ += friction_ * deltaTime();//減速
+			force_ += friction_ * dt;//減速
 		}
 		else if (!(isLakeAreaHit_))
 		{
@@ -128,7 +129,7 @@ void Player::Update()
 			isTreeHit_ = false;
 		}
 	}
-	vy += gravity_ * deltaTime();//落下
+	vy += gravity_ * dt;//落下
 
 	//最高スピード
 	if (force_ > MAX_SPEED)
@@ -142,7 +143,7 @@ void Player::Update()
 		force_ = 0.0f;
 		vy = 0.0f;
 		static float timer = 0.0f;
-		timer += deltaTime();
+		timer += dt;
 		if (timer > 3.0f)
 		{
 			transform_.position_ = respawnPos_;
