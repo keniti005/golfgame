@@ -48,6 +48,7 @@ void Player::Initialize()
 	csvSenterVal_.x = w / 2.0f;
 	csvSenterVal_.z = h / 2.0f;
 
+	//コリジョン判定を設定
 	SphereCollider* collicion = new SphereCollider(XMFLOAT3(0.0f,transform_.scale_.y / 2.0f,0.0f),0.5f);
 	AddCollider(collicion);
 
@@ -79,7 +80,7 @@ void Player::Update()
 
 	float dt = deltaTime();
 	XMVECTOR vPos = XMLoadFloat3(&transform_.position_);
-#if true
+#if false
 	const float MAX_SPEED = 3.0f;
 	ChangeClub();
 
@@ -107,7 +108,7 @@ void Player::Update()
 		{
 			respawnPos_ = transform_.position_;//リスポーン地点の設定
 			force_ = (velocity_.z * powerRate_[rangeNum_]) * mass_;//運動方程式
-			vy = velocity_.y * sinf(45.0f) + gravity_ * deltaTime();//斜方投射
+			vy = velocity_.y * sinf(45.0f) + gravity_ * dt;//斜方投射
 			isShoot_ = true;
 			isFly_ = true;
 			turns_++;//ターン数加算
@@ -234,6 +235,37 @@ void Player::Update()
 		vPos -= vMoveZ;
 		XMStoreFloat3(&transform_.position_, vPos);
 	}
+
+	//ステージ上のレイキャスト
+	Stage* pStage = (Stage*)FindObject("Stage");//ステージオブジェクトを探す
+	int hStageModel = pStage->GetModelHandle();//モデル番号を取得
+	RayCastData data;
+	Transform tModel;
+	data.start = transform_.position_;
+	data.dir = XMFLOAT3(0, 0, -1);
+	Model::RayCast(hStageModel, &data);
+
+	if (data.hit)
+	{
+		tModel.position_.z = -data.dist;
+	}
+	if (transform_.position_.y <= tModel.position_.y)
+	{
+		transform_.position_.z += 0.1f;
+	}
+
+	data.dir = XMFLOAT3(0, 0, 1);
+	Model::RayCast(hStageModel, &data);
+	if (data.hit)
+	{
+		tModel.position_.z = -data.dist;
+	}
+	if (transform_.position_.y <= tModel.position_.y)
+	{
+		transform_.position_.z -= 0.1f;
+	}
+	HitRayCast(hStageModel)	;
+
 # endif
 
 	XMVECTOR vCam;
