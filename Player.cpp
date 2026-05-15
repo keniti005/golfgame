@@ -239,32 +239,37 @@ void Player::Update()
 	//ステージ上のレイキャスト
 	Stage* pStage = (Stage*)FindObject("Stage");//ステージオブジェクトを探す
 	int hStageModel = pStage->GetModelHandle();//モデル番号を取得
+
+	//RayCastData data;
+	//Transform tModel;
+	//tModel = transform_;
+	//float rayStart = 0.0f;
+	//data.start = transform_.position_;
+	//data.start.z = 0.0f;
+	//data.dir = XMFLOAT3(0, 0, -1);
+	//Model::RayCast(hStageModel, &data);
+	//if (data.hit)
+	//{
+	//	transform_.position_.z = -data.dist; //+ data.start.y;
+	//	//isFly_ = false;
+	//}
+
 	RayCastData data;
 	Transform tModel;
+	tModel = transform_;
+	float rayStart = 0.0f;
 	data.start = transform_.position_;
-	data.dir = XMFLOAT3(0, 0, -1);
-	Model::RayCast(hStageModel, &data);
-
-	if (data.hit)
-	{
-		tModel.position_.z = -data.dist;
-	}
-	if (transform_.position_.y <= tModel.position_.y)
-	{
-		transform_.position_.z += 0.1f;
-	}
-
+	data.start.z = 0.0f;
 	data.dir = XMFLOAT3(0, 0, 1);
 	Model::RayCast(hStageModel, &data);
 	if (data.hit)
 	{
-		tModel.position_.z = -data.dist;
+		transform_.position_.z = -data.dist; //+ data.start.y;
+		//isFly_ = false;
 	}
-	if (transform_.position_.y <= tModel.position_.y)
-	{
-		transform_.position_.z -= 0.1f;
-	}
-	HitRayCast(hStageModel)	;
+
+	
+	//HitRayCast(hStageModel);
 
 # endif
 
@@ -341,9 +346,10 @@ void Player::HitRayCast(int hModel)
 {
 	RayCastData data;
 	Transform tModel;
+	tModel.position_.y = transform_.position_.y;
 	float rayStart = 20.0f;
 	data.start = transform_.position_;
-	data.start.y = transform_.position_.y + rayStart;
+	data.start.y = rayStart;
 	data.dir = XMFLOAT3(0, -1, 0);
 	Model::RayCast(hModel, &data);
 	if (data.hit)
