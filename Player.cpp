@@ -1,6 +1,7 @@
 #include "Player.h"
 #include "Stage.h"
 #include "Goal.h"
+#include "GolfClub.h"
 #include "Engine/Input.h"
 #include "Engine/Camera.h"
 #include "Engine/CsvReader.h"
@@ -10,7 +11,7 @@
 
 Player::Player(GameObject* parent)
 	:GameObject(parent, "Player"),hModel_(-1), mass_(0.5f), force_(0.0f), friction_(-1.1f), gravity_(-5.8f)
-	, velocity_{ 0.0f,0.0f,0.0f }, vy(0.0f), club_(IRONCLUB), rangeNum_(0), csvSenterVal_{ 0.0f,0.0f,0.0f }
+	, velocity_{ 0.0f,0.0f,0.0f }, vy(0.0f), rangeNum_(0), csvSenterVal_{ 0.0f,0.0f,0.0f }
 	, camTargetNow_(PLAYER), turns_(0), respawnPos_(0.0f, 0.0f, 0.0f), isShoot_(false), isFly_(false)
 	, isTreeHit_(false), isLakeAreaHit_(false), isSandAreaHit_(false)
 {
@@ -25,9 +26,6 @@ void Player::Initialize()
 	transform_.scale_.x = 1.0f;
 	transform_.scale_.y = 1.0f;
 	transform_.scale_.z = 1.0f;
-	//hModel_ = Model::Load("ironClub.fbx");
-	//hModel_ = Model::Load("woodenClub.fbx");
-	//hModel_ = Model::Load("smallClub.fbx");
 	hModel_ = Model::Load("bollPlayer.fbx");
 	assert(hModel_ >= 0);
 	CsvReader csv;
@@ -52,6 +50,8 @@ void Player::Initialize()
 	SphereCollider* collicion = new SphereCollider(XMFLOAT3(0.0f,transform_.scale_.y / 2.0f,0.0f),0.5f);
 	AddCollider(collicion);
 
+	Instantiate<GolfClub>(this);
+
 	powerRate_.push_back(0.5f);
 	powerRate_.push_back(0.7f);
 	powerRate_.push_back(0.95f);
@@ -60,6 +60,7 @@ void Player::Initialize()
 
 void Player::Update()
 {
+	GolfClub* pGolfClub = (GolfClub*)FindObject("GolfClub");
 	if (Input::IsKeyDown(DIK_M))
 	{
 		ChangeCamera();
@@ -80,11 +81,10 @@ void Player::Update()
 
 	float dt = deltaTime();
 	XMVECTOR vPos = XMLoadFloat3(&transform_.position_);
-#if false
+#if true
 	const float MAX_SPEED = 3.0f;
-	ChangeClub();
 
-	switch (club_)
+	switch (pGolfClub->ChangeClub())
 	{
 	case IRONCLUB:
 		velocity_.y = 2.0f;
@@ -269,7 +269,7 @@ void Player::Update()
 	}
 
 	
-	//HitRayCast(hStageModel);
+	HitRayCast(hStageModel);
 
 # endif
 
@@ -346,7 +346,7 @@ void Player::HitRayCast(int hModel)
 {
 	RayCastData data;
 	Transform tModel;
-	tModel.position_.y = transform_.position_.y;
+	//tModel.position_.y = transform_.position_.y;
 	float rayStart = 20.0f;
 	data.start = transform_.position_;
 	data.start.y = rayStart;
@@ -375,46 +375,6 @@ void Player::Save()
 		OutputDebugStringA("ファイルが開けません");
 	}
 	ofs.close();
-}
-
-void Player::ChangeClub()
-{
-	if (Input::IsKeyDown(DIK_UP))
-	{
-		switch (club_)
-		{
-		case IRONCLUB:
-			club_ = WOODENCLUB;
-			break;
-		case WOODENCLUB:
-			club_ = SMALLCLUB;
-			break;
-		case SMALLCLUB:
-			club_ = IRONCLUB;
-			break;
-		default:
-			club_ = IRONCLUB;
-			break;
-		}
-	}
-	if (Input::IsKeyDown(DIK_DOWN))
-	{
-		switch (club_)
-		{
-		case IRONCLUB:
-			club_ = SMALLCLUB;
-			break;
-		case WOODENCLUB:
-			club_ = IRONCLUB;
-			break;
-		case SMALLCLUB:
-			club_ = WOODENCLUB;
-			break;
-		default:
-			club_ = IRONCLUB;
-			break;
-		}
-	}
 }
 
 void Player::ChangeCamera()

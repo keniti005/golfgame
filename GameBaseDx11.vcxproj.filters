@@ -112,6 +112,7 @@
     <ClCompile Include="SandArea.cpp">
       <Filter>Area</Filter>
     </ClCompile>
+    <ClCompile Include="GolfClub.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Engine\BoxCollider.h">
@@ -197,6 +198,7 @@
     <ClInclude Include="SandArea.h">
       <Filter>Area</Filter>
     </ClInclude>
+    <ClInclude Include="GolfClub.h" />
   </ItemGroup>
   <ItemGroup>
     <FxCompile Include="Assets\Shader\Simple2D.hlsl">

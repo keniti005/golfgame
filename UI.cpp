@@ -1,6 +1,7 @@
 #include "UI.h"
 #include "Player.h"
 #include "Goal.h"
+#include "GolfClub.h"
 #include "Engine/Image.h"
 #include "Engine/Input.h"
 #include "Engine/Global.h"
@@ -90,14 +91,15 @@ void UI::Update()
 		}
 	}
 	secondTimer_ += dt;
-	OutputDebugStringA(("timer:" + std::to_string(secondTimer_) + "\n").c_str());
+	//OutputDebugStringA(("timer:" + std::to_string(secondTimer_) + "\n").c_str());
 }
 
 void UI::Draw()
 {
 	Player* pPlayer = (Player*)FindObject("Player");
 	Goal* pGoal = (Goal*)FindObject("Goal");
-	int currentClub = pPlayer->GetClub();//クラブの種類を取得
+	GolfClub* pGolfClub = (GolfClub*)FindObject("GolfClub");
+	int currentClub = pGolfClub->GetClub();//クラブの種類を取得
 
 	if (pGoal->IsGoal())
 	{
@@ -137,7 +139,7 @@ void UI::Draw()
 	{
 		pText_->Draw(50, 50, (std::to_string((int)minuteTimer_) + ":" + std::to_string((int)secondTimer_)).c_str());//タイマー表示
 	}
-	pText_->Draw(50, 100, (turnText_ + std::to_string(pPlayer->Getturns())).c_str());//ターン数表示
+	pText_->Draw(50, 100, (turnText_ + std::to_string(pPlayer->GetTurns())).c_str());//ターン数表示
 
 	if (pPlayer->IsShoot())//矢印の位置を初期化
 	{

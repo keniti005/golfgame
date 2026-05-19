@@ -10,13 +10,6 @@ struct MyStruct
     float z;
 };
 
-enum CLUB
-{
-    IRONCLUB = 0,
-    WOODENCLUB,
-    SMALLCLUB,
-};
-
 enum CAMERA
 {
     PLAYER,
@@ -37,15 +30,13 @@ public:
     void OnCollision(GameObject* pTarget) override;
 
     bool IsShoot() const { return isShoot_; }
-    int GetClub() const { return club_; }
     void SetRange(int range);
     CAMERA CameraMode() const { return camTargetNow_; }
     void Save();
 
-    int Getturns() const { return turns_; }
+    int GetTurns() const { return turns_; }
     
 private:
-    void ChangeClub();
     void ChangeCamera();
     void HitRayCast(int hModel);
 
@@ -55,7 +46,6 @@ private:
     MyStruct csvSenterVal_;//ステージオブジェトの中央の値
     MyStruct velocity_;
 	XMFLOAT3 respawnPos_;//リスポーン地点
-    CLUB club_;
     int turns_;
 
     float mass_;//質量
