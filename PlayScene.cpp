@@ -3,6 +3,7 @@
 #include "Stage.h"
 #include "Goal.h"
 #include "UI.h"
+#include "GolfClub.h"
 #include "Engine/SceneManager.h"
 #include "Engine/Global.h"
 
@@ -20,6 +21,7 @@ void PlayScene::Initialize()
 	Instantiate<Player>(this);
 	Instantiate<Stage>(this);
 	Instantiate<UI>(this);
+	Instantiate<GolfClub>(this);
 }
 
 void PlayScene::Update()

@@ -1,5 +1,9 @@
 #include "GolfClub.h"
+#include "Player.h"
 #include "Engine/Input.h"
+#include "Engine/Model.h"
+#include "Engine/Global.h"
+#include <string>
 
 GolfClub::GolfClub(GameObject* parent)
 	:GameObject(parent, "GolfClub"), club_(IRONCLUB)
@@ -12,9 +16,27 @@ GolfClub::~GolfClub()
 
 void GolfClub::Initialize()
 {
-	//hModel_ = Model::Load("ironClub.fbx");
-	//hModel_ = Model::Load("woodenClub.fbx");
-	//hModel_ = Model::Load("smallClub.fbx");
+	transform_.scale_.x = 1.0f;
+	transform_.scale_.y = 1.0f;
+	transform_.scale_.z = 1.0f;
+	Player* pPlayer = (Player*)FindObject("Player");
+	transform_.position_ = pPlayer->GetPosition();
+	std::vector<std::string> fileName =
+	{
+		"ironClub.fbx",
+		"woodenClub.fbx",
+		"smallClub.fbx"
+	};
+	for (int i = 0; i < fileName.size(); i++)
+	{
+		hModels_.push_back(Model::Load(fileName[i]));
+		assert(hModels_[i] >= 0);
+	}
+	int startFrame = 0;
+	int endFrame = 300;
+	//Model::SetAnimFrame(hModels_[IRONCLUB], startFrame, endFrame, 2);
+	//Model::SetAnimFrame(hModels_[WOODENCLUB], startFrame, endFrame, 2);
+	//Model::SetAnimFrame(hModels_[SMALLCLUB], startFrame, endFrame, 4);
 }
 
 void GolfClub::Update()
@@ -23,6 +45,8 @@ void GolfClub::Update()
 
 void GolfClub::Draw()
 {
+	Model::SetTransform(hModels_[club_], transform_);
+	Model::Draw(hModels_[club_]);
 }
 
 void GolfClub::Release()

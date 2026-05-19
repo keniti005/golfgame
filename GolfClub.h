@@ -1,5 +1,6 @@
 #pragma once
 #include "Engine/GameObject.h"
+#include <vector>
 
 enum CLUB
 {
@@ -23,6 +24,6 @@ public:
 	int ChangeClub();
 
 private:
-
+	std::vector<int> hModels_;
 	CLUB club_;
 };

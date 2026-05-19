@@ -50,8 +50,6 @@ void Player::Initialize()
 	SphereCollider* collicion = new SphereCollider(XMFLOAT3(0.0f,transform_.scale_.y / 2.0f,0.0f),0.5f);
 	AddCollider(collicion);
 
-	Instantiate<GolfClub>(this);
-
 	powerRate_.push_back(0.5f);
 	powerRate_.push_back(0.7f);
 	powerRate_.push_back(0.95f);
