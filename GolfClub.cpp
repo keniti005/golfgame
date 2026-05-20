@@ -6,7 +6,7 @@
 #include <string>
 
 GolfClub::GolfClub(GameObject* parent)
-	:GameObject(parent, "GolfClub"), club_(IRONCLUB)
+	:GameObject(parent, "GolfClub"), club_(IRONCLUB), isAnimStart_(false), isAnimEnd_(false)
 {
 }
 
@@ -19,8 +19,7 @@ void GolfClub::Initialize()
 	transform_.scale_.x = 1.0f;
 	transform_.scale_.y = 1.0f;
 	transform_.scale_.z = 1.0f;
-	Player* pPlayer = (Player*)FindObject("Player");
-	transform_.position_ = pPlayer->GetPosition();
+
 	std::vector<std::string> fileName =
 	{
 		"ironClub.fbx",
@@ -32,21 +31,50 @@ void GolfClub::Initialize()
 		hModels_.push_back(Model::Load(fileName[i]));
 		assert(hModels_[i] >= 0);
 	}
-	int startFrame = 0;
-	int endFrame = 300;
-	//Model::SetAnimFrame(hModels_[IRONCLUB], startFrame, endFrame, 2);
-	//Model::SetAnimFrame(hModels_[WOODENCLUB], startFrame, endFrame, 2);
-	//Model::SetAnimFrame(hModels_[SMALLCLUB], startFrame, endFrame, 4);
 }
 
 void GolfClub::Update()
 {
+	Player* pPlayer = (Player*)FindObject("Player");
+	int startFrame = 0;
+	int endFrame = 300;
+	int animSpeed = 2;
+	if (!(pPlayer->IsShoot()))
+	{
+		deleteTimer_ = 0.0f;
+		isAnimStart_ = false;
+		isAnimEnd_ = false;
+
+		transform_.position_ = pPlayer->GetPosition();
+		transform_.position_.z -= 0.4f;
+		XMMATRIX mRotate = XMMatrixRotationY(XMConvertToRadians(pPlayer->GetRotate().y));
+		XMVECTOR vPos = XMLoadFloat3(&transform_.position_);
+		XMVECTOR Move = { 0.0f,0.0f,0.0f,0.0f };
+		//vPos = XMVector3TransformCoord(vPos, mRotate);
+		Move = XMVector3TransformCoord(Move, mRotate);
+		vPos += Move;
+		XMStoreFloat3(&transform_.position_, vPos);
+	}
+	if (isAnimStart_)
+	{
+		Model::SetAnimFrame(hModels_[IRONCLUB], startFrame, endFrame, animSpeed);
+		Model::SetAnimFrame(hModels_[WOODENCLUB], startFrame, endFrame, animSpeed);
+		Model::SetAnimFrame(hModels_[SMALLCLUB], startFrame, endFrame, animSpeed + 2);
+		if (Model::GetAnimFrame(hModels_[club_]) >= endFrame)
+		{
+			isAnimEnd_ = true;
+			deleteTimer_ += deltaTime();
+		}
+	}
 }
 
 void GolfClub::Draw()
 {
 	Model::SetTransform(hModels_[club_], transform_);
-	Model::Draw(hModels_[club_]);
+	if (deleteTimer_ > 2.0f)
+	{
+		Model::Draw(hModels_[club_]);
+	}
 }
 
 void GolfClub::Release()

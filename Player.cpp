@@ -100,6 +100,25 @@ void Player::Update()
 		break;
 	}
 
+#if false
+	if (!(isShoot_))
+	{
+		if (Input::IsKeyDown(DIK_SPACE) && camTargetNow_ == PLAYER)
+		{
+			pGolfClub->IsAnimStart(true);
+			turns_++;//ターン数加算
+		}
+	}
+	if (pGolfClub->GetAnimEnd())//アニメーションが終わったら打つ
+	{
+		respawnPos_ = transform_.position_;//リスポーン地点の設定
+		force_ = (velocity_.z * powerRate_[rangeNum_]) * mass_;//運動方程式
+		vy = velocity_.y * sinf(45.0f) + gravity_ * dt;//斜方投射
+		isShoot_ = true;
+		isFly_ = true;
+	}
+
+#else
 	if (!(isShoot_))
 	{
 		if (Input::IsKeyDown(DIK_SPACE) && camTargetNow_ == PLAYER)
@@ -112,7 +131,7 @@ void Player::Update()
 			turns_++;//ターン数加算
 		}
 	}
-
+#endif
 	if (!(isFly_))
 	{
 		if (force_ > 0)
@@ -276,14 +295,14 @@ void Player::Update()
 	XMFLOAT3 CamTarget;
 	float camPosY;
 	vPos = XMLoadFloat3(&transform_.position_);
-
+	
 	switch (camTargetNow_)
 	{
 	case PLAYER://プレイヤーを中心に見た視点
 		vCam = { 0,4.0f,-11.0f,0 };
 		vCam = XMVector3TransformCoord(vCam, mRotate);
 		XMStoreFloat3(&camPos, vPos + vCam);
-		Camera::SetPosition(XMFLOAT3(camPos));
+		Camera::SetPosition(camPos);
 		CamTarget = transform_.position_;
 		Camera::SetTarget(CamTarget);
 		break;

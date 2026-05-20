@@ -26,6 +26,7 @@ void UI::Initialize()
 	{
 		assert(hMetaPict_[i] >= 0);
 	}
+
 	hArowPict_ = (Image::Load("Arow.png"));
 	assert(hArowPict_ >= 0);
 

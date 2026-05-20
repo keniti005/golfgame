@@ -22,8 +22,14 @@ public:
 
 	int GetClub() const { return club_; }
 	int ChangeClub();
+	void IsAnimStart(bool start) { isAnimStart_ = start; }
+	bool GetAnimStart() const { return isAnimStart_; }
+	bool GetAnimEnd() const { return isAnimEnd_; }
 
 private:
 	std::vector<int> hModels_;
 	CLUB club_;
+	float deleteTimer_;//アニメーションが終わった後、クラブを消すタイマー
+	bool isAnimStart_;//アニメーションが始まったかどうか
+	bool isAnimEnd_;//アニメーションが終わったかどうか
 };
