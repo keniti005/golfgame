@@ -100,7 +100,7 @@ void Player::Update()
 		break;
 	}
 
-#if false
+#if true
 	if (!(isShoot_))
 	{
 		if (Input::IsKeyDown(DIK_SPACE) && camTargetNow_ == PLAYER)
@@ -108,14 +108,14 @@ void Player::Update()
 			pGolfClub->IsAnimStart(true);
 			turns_++;//ターン数加算
 		}
-	}
-	if (pGolfClub->GetAnimEnd())//アニメーションが終わったら打つ
-	{
-		respawnPos_ = transform_.position_;//リスポーン地点の設定
-		force_ = (velocity_.z * powerRate_[rangeNum_]) * mass_;//運動方程式
-		vy = velocity_.y * sinf(45.0f) + gravity_ * dt;//斜方投射
-		isShoot_ = true;
-		isFly_ = true;
+		if (pGolfClub->GetAnimEnd())//アニメーションが終わったら打つ
+		{
+			respawnPos_ = transform_.position_;//リスポーン地点の設定
+			force_ = (velocity_.z * powerRate_[rangeNum_]) * mass_;//運動方程式
+			vy = velocity_.y * sinf(45.0f) + gravity_ * dt;//斜方投射
+			isShoot_ = true;
+			isFly_ = true;
+		}
 	}
 
 #else
