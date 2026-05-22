@@ -49,24 +49,25 @@ void GolfClub::Update()
 		transform_.position_.z -= 0.4f;
 		//XMMATRIX mRotate = XMMatrixRotationY(XMConvertToRadians(pPlayer->GetRotate().y));
 		//XMVECTOR vPos = XMLoadFloat3(&transform_.position_);
-		//XMVECTOR Move = { 0.0f,0.0f,0.0f,0.0f };
-		////vPos = XMVector3TransformCoord(vPos, mRotate);
-		//Move = XMVector3TransformCoord(Move, mRotate);
-		//vPos += Move;
+		//vPos = XMVector3TransformCoord(vPos, mRotate);
 		//XMStoreFloat3(&transform_.position_, vPos);
 	}
+
 	if (isAnimStart_)
 	{
-		isAnimStart_ = false;
-		Model::SetAnimFrame(hModels_[IRONCLUB], startFrame, endFrame, animSpeed);
-		Model::SetAnimFrame(hModels_[WOODENCLUB], startFrame, endFrame, animSpeed);
-		Model::SetAnimFrame(hModels_[SMALLCLUB], startFrame, endFrame, animSpeed + 2);
+		if (Model::GetAnimFrame(hModels_[club_]) <= startFrame)
+		{
+			Model::SetAnimFrame(hModels_[IRONCLUB], startFrame, endFrame, animSpeed);
+			Model::SetAnimFrame(hModels_[WOODENCLUB], startFrame, endFrame, animSpeed);
+			Model::SetAnimFrame(hModels_[SMALLCLUB], startFrame, endFrame, animSpeed + 2);
+		}
 		deleteTimer_ = 0.0f;
 	}
 
 	if (Model::GetAnimFrame(hModels_[club_]) >= endFrame)
 	{
 		isAnimEnd_ = true;
+		isAnimStart_ = false;
 	}
 
 	if (isAnimEnd_)

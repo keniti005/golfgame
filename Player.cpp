@@ -58,7 +58,6 @@ void Player::Initialize()
 
 void Player::Update()
 {
-	GolfClub* pGolfClub = (GolfClub*)FindObject("GolfClub");
 	if (Input::IsKeyDown(DIK_M))
 	{
 		ChangeCamera();
@@ -80,6 +79,7 @@ void Player::Update()
 	float dt = deltaTime();
 	XMVECTOR vPos = XMLoadFloat3(&transform_.position_);
 #if true
+	GolfClub* pGolfClub = (GolfClub*)FindObject("GolfClub");
 	const float MAX_SPEED = 3.0f;
 
 	switch (pGolfClub->ChangeClub())
@@ -103,7 +103,7 @@ void Player::Update()
 #if true
 	if (!(isShoot_))
 	{
-		if (Input::IsKeyDown(DIK_SPACE) && camTargetNow_ == PLAYER)
+		if (Input::IsKeyDown(DIK_SPACE) && !(pGolfClub->GetAnimStart()) && camTargetNow_ == PLAYER)
 		{
 			pGolfClub->IsAnimStart(true);
 			turns_++;//ターン数加算
@@ -113,11 +113,10 @@ void Player::Update()
 			respawnPos_ = transform_.position_;//リスポーン地点の設定
 			force_ = (velocity_.z * powerRate_[rangeNum_]) * mass_;//運動方程式
 			vy = velocity_.y * sinf(45.0f) + gravity_ * dt;//斜方投射
-			isShoot_ = true;
 			isFly_ = true;
+			isShoot_ = true;
 		}
 	}
-
 #else
 	if (!(isShoot_))
 	{
@@ -168,7 +167,6 @@ void Player::Update()
 			vPos = XMLoadFloat3(&transform_.position_);
 			timer = 0.0f;
 		}
-		OutputDebugStringA(("respwnTimer:" + std::to_string(timer) + "\n").c_str());
 	}
 
 	if (isSandAreaHit_)
@@ -181,7 +179,7 @@ void Player::Update()
 		isLakeAreaHit_ = false;
 		isSandAreaHit_ = false;
 	}
-
+	
 	XMVECTOR vMoveY = XMVectorSet(0, vy, 0, 0);
 	XMVECTOR vMoveZ = XMVectorSet(0, 0, force_, 0);
 

@@ -110,7 +110,7 @@ void UI::Draw()
 	{
 		for (int i = 0; i < hMetaPict_.size(); i++)
 		{
-			if (!(pPlayer->IsShoot()))
+			if (!(pPlayer->IsShoot()) && !(pGolfClub->GetAnimStart()))
 			{
 				//パワーメータ
 				Image::SetTransform(hMetaPict_[i], tHitMeta);
