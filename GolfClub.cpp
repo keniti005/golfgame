@@ -43,14 +43,18 @@ void GolfClub::Update()
 	int startFrame = 0;
 	int endFrame = 300;
 	int animSpeed = 2;
+	transform_.rotate_ = pPlayer->GetRotate();
 	if (!(pPlayer->IsShoot()))
 	{
 		transform_.position_ = pPlayer->GetPosition();
-		transform_.position_.z -= 0.4f;
-		//XMMATRIX mRotate = XMMatrixRotationY(XMConvertToRadians(pPlayer->GetRotate().y));
-		//XMVECTOR vPos = XMLoadFloat3(&transform_.position_);
-		//vPos = XMVector3TransformCoord(vPos, mRotate);
-		//XMStoreFloat3(&transform_.position_, vPos);
+		//transform_.position_.z -= 0.4f;
+		XMMATRIX mRotate = XMMatrixRotationY(XMConvertToRadians(transform_.rotate_.y));
+		//XMMATRIX mTranslate = XMMatrixTranslation(transform_.position_.x, transform_.position_.y, transform_.position_.z);
+		//XMMATRIX mWorld = mRotate * mTranslate;
+		XMVECTOR vPos = XMLoadFloat3(&transform_.position_);
+		vPos = XMVector3TransformCoord(vPos, mRotate);
+		XMStoreFloat3(&transform_.position_, vPos);
+
 	}
 
 	if (isAnimStart_)
