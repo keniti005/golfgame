@@ -81,6 +81,7 @@ void Player::Update()
 #if true
 	GolfClub* pGolfClub = (GolfClub*)FindObject("GolfClub");
 	const float MAX_SPEED = 3.0f;
+	static bool pushKeyRock = false;
 
 	switch (pGolfClub->ChangeClub())
 	{
@@ -103,8 +104,9 @@ void Player::Update()
 #if true
 	if (!(isShoot_))
 	{
-		if (Input::IsKeyDown(DIK_SPACE) && !(pGolfClub->GetAnimStart()) && camTargetNow_ == PLAYER)
+		if (Input::IsKeyDown(DIK_SPACE) && camTargetNow_ == PLAYER && !(pushKeyRock))
 		{
+			pushKeyRock = true;
 			pGolfClub->IsAnimStart(true);
 			turns_++;//ƒ^[ƒ“”‰ÁZ
 		}
@@ -144,6 +146,7 @@ void Player::Update()
 			vy = 0.0f;
 			isShoot_ = false;
 			isTreeHit_ = false;
+			pushKeyRock = false;
 		}
 	}
 	vy += gravity_ * dt;//—‰º
