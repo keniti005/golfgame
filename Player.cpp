@@ -2,6 +2,7 @@
 #include "Stage.h"
 #include "Goal.h"
 #include "GolfClub.h"
+#include "OutArea.h"
 #include "Engine/Input.h"
 #include "Engine/Camera.h"
 #include "Engine/CsvReader.h"
@@ -101,7 +102,7 @@ void Player::Update()
 		break;
 	}
 
-#if true
+#if false
 	if (!(isShoot_))
 	{
 		if (Input::IsKeyDown(DIK_SPACE) && camTargetNow_ == PLAYER && !(pushKeyRock))
