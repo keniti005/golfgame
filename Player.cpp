@@ -125,7 +125,7 @@ void Player::Update()
 	{
 		if (Input::IsKeyDown(DIK_SPACE) && camTargetNow_ == PLAYER)
 		{
-			respawnPos_ = transform_.position_;//リスポーン地点の設定
+			respawnPos_ = transform_.position_;//スポーン地点の設定
 			force_ = (velocity_.z * powerRate_[rangeNum_]) * mass_;//運動方程式
 			vy = velocity_.y * sinf(45.0f) + gravity_ * dt;//斜方投射
 			isShoot_ = true;
@@ -160,13 +160,13 @@ void Player::Update()
 
 	if (isLakeAreaHit_)
 	{
-		//リスポーン地点に移動
 		force_ = 0.0f;
 		vy = 0.0f;
 		static float timer = 0.0f;
 		timer += dt;
 		if (timer > 3.0f)
 		{
+			//打った地点に移動
 			transform_.position_ = respawnPos_;
 			vPos = XMLoadFloat3(&transform_.position_);
 			timer = 0.0f;
@@ -208,6 +208,11 @@ void Player::Update()
 	vPos += vMoveZ;
 	XMStoreFloat3(&transform_.position_, vPos);
 
+	//エリア外のレイキャスト
+	OutArea* pOutArea = (OutArea*)FindObject("OutArea");    //ステージオブジェクトを探す
+	int hOutAreaModel = pOutArea->GetModelHandle();    //モデル番号を取得
+	HitRayCast(hOutAreaModel);
+
 	//ステージ上のレイキャスト
 	Stage* pStage = (Stage*)FindObject("Stage");//ステージオブジェクトを探す
 	int hStageModel = pStage->GetModelHandle();//モデル番号を取得
@@ -217,6 +222,7 @@ void Player::Update()
 	Goal* pGoal = (Goal*)FindObject("Goal");    //ステージオブジェクトを探す
 	int hGoalModel = pGoal->GetModelHandle();    //モデル番号を取得
 	HitRayCast(hGoalModel);
+
 
 #else//デバッグ用
 	XMVECTOR vMoveY = XMVectorSet(0, 0.4f, 0, 0);
@@ -361,23 +367,38 @@ void Player::SetRange(int range)
 	rangeNum_ = range - 1;
 }
 
+//void Player::HitRayCast(int hModel)
+//{
+//	RayCastData data;
+//	Transform tModel;
+//	//tModel.position_.y = transform_.position_.y;
+//	float rayStart = 20.0f;
+//	data.start = transform_.position_;
+//	data.start.y = rayStart;
+//	data.dir = XMFLOAT3(0, -1, 0);
+//	Model::RayCast(hModel, &data);
+//	if (data.hit)
+//	{
+//		tModel.position_.y = -data.dist + data.start.y;
+//	}
+//	if (transform_.position_.y <= tModel.position_.y)
+//	{
+//		transform_.position_.y = tModel.position_.y;
+//		isFly_ = false;
+//	}
+//}
+
 void Player::HitRayCast(int hModel)
 {
 	RayCastData data;
-	Transform tModel;
-	//tModel.position_.y = transform_.position_.y;
-	float rayStart = 20.0f;
+	float rayStartHeight = 20.0f;
 	data.start = transform_.position_;
-	data.start.y = rayStart;
+	data.start.y = rayStartHeight;
 	data.dir = XMFLOAT3(0, -1, 0);
 	Model::RayCast(hModel, &data);
 	if (data.hit)
 	{
-		tModel.position_.y = -data.dist + data.start.y;
-	}
-	if (transform_.position_.y <= tModel.position_.y)
-	{
-		transform_.position_.y = tModel.position_.y;
+		transform_.position_.y = -data.dist + data.start.y;
 		isFly_ = false;
 	}
 }
