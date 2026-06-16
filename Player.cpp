@@ -223,7 +223,6 @@ void Player::Update()
 	int hGoalModel = pGoal->GetModelHandle();    //モデル番号を取得
 	HitRayCast(hGoalModel);
 
-
 #else//デバッグ用
 	XMVECTOR vMoveY = XMVectorSet(0, 0.4f, 0, 0);
 	XMVECTOR vMoveZ = XMVectorSet(0, 0, 0.4f, 0);
@@ -370,20 +369,14 @@ void Player::SetRange(int range)
 //void Player::HitRayCast(int hModel)
 //{
 //	RayCastData data;
-//	Transform tModel;
-//	//tModel.position_.y = transform_.position_.y;
-//	float rayStart = 20.0f;
+//	float rayStartHeight = 20.0f;
 //	data.start = transform_.position_;
-//	data.start.y = rayStart;
+//	data.start.y = rayStartHeight;
 //	data.dir = XMFLOAT3(0, -1, 0);
 //	Model::RayCast(hModel, &data);
 //	if (data.hit)
 //	{
-//		tModel.position_.y = -data.dist + data.start.y;
-//	}
-//	if (transform_.position_.y <= tModel.position_.y)
-//	{
-//		transform_.position_.y = tModel.position_.y;
+//		transform_.position_.y = -data.dist + data.start.y;
 //		isFly_ = false;
 //	}
 //}
@@ -391,6 +384,7 @@ void Player::SetRange(int range)
 void Player::HitRayCast(int hModel)
 {
 	RayCastData data;
+	Transform tModel;
 	float rayStartHeight = 20.0f;
 	data.start = transform_.position_;
 	data.start.y = rayStartHeight;
@@ -398,8 +392,12 @@ void Player::HitRayCast(int hModel)
 	Model::RayCast(hModel, &data);
 	if (data.hit)
 	{
-		transform_.position_.y = -data.dist + data.start.y;
-		isFly_ = false;
+		tModel.position_.y = -data.dist + data.start.y;
+		if (transform_.position_.y <= tModel.position_.y)
+		{
+			transform_.position_.y = tModel.position_.y;
+			isFly_ = false;
+		}
 	}
 }
 
