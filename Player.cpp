@@ -14,7 +14,7 @@ Player::Player(GameObject* parent)
 	:GameObject(parent, "Player"),hModel_(-1), mass_(0.5f), force_(0.0f), friction_(-1.1f), gravity_(-5.8f)
 	, velocity_{ 0.0f,0.0f,0.0f }, vy(0.0f), rangeNum_(0), csvSenterVal_{ 0.0f,0.0f,0.0f }
 	, camTargetNow_(PLAYER), turns_(0), respawnPos_(0.0f, 0.0f, 0.0f), isShoot_(false), isFly_(false)
-	, isTreeHit_(false), isLakeAreaHit_(false), isSandAreaHit_(false)
+	, isTreeHit_(false), isLakeAreaHit_(false), isSandAreaHit_(false), isOutAreaHit_(false)
 {
 }
 
@@ -157,32 +157,6 @@ void Player::Update()
 	{
 		force_ = MAX_SPEED;
 	}
-
-	if (isLakeAreaHit_)
-	{
-		force_ = 0.0f;
-		vy = 0.0f;
-		static float timer = 0.0f;
-		timer += dt;
-		if (timer > 3.0f)
-		{
-			//打った地点に移動
-			transform_.position_ = respawnPos_;
-			vPos = XMLoadFloat3(&transform_.position_);
-			timer = 0.0f;
-		}
-	}
-
-	if (isSandAreaHit_)
-	{
-		force_ *= 0.8f;
-	}
-
-	//エリア判定リセット
-	{
-		isLakeAreaHit_ = false;
-		isSandAreaHit_ = false;
-	}
 	
 	XMVECTOR vMoveY = XMVectorSet(0, vy, 0, 0);
 	XMVECTOR vMoveZ = XMVectorSet(0, 0, force_, 0);
@@ -211,17 +185,54 @@ void Player::Update()
 	//エリア外のレイキャスト
 	OutArea* pOutArea = (OutArea*)FindObject("OutArea");    //ステージオブジェクトを探す
 	int hOutAreaModel = pOutArea->GetModelHandle();    //モデル番号を取得
-	HitRayCast(hOutAreaModel);
+	RayCast(hOutAreaModel);
 
 	//ステージ上のレイキャスト
 	Stage* pStage = (Stage*)FindObject("Stage");//ステージオブジェクトを探す
 	int hStageModel = pStage->GetModelHandle();//モデル番号を取得
-	HitRayCast(hStageModel);
+	RayCast(hStageModel);
 
 	//ゴール地点のレイキャスト
 	Goal* pGoal = (Goal*)FindObject("Goal");    //ステージオブジェクトを探す
 	int hGoalModel = pGoal->GetModelHandle();    //モデル番号を取得
-	HitRayCast(hGoalModel);
+	RayCast(hGoalModel);
+
+	isOutAreaHit_ = HitAreaRayCast(hOutAreaModel);
+
+	if (isLakeAreaHit_)
+	{
+		force_ = 0.0f;
+		vy = 0.0f;
+		static float timer = 0.0f;
+		timer += dt;
+		if (timer > 3.0f)
+		{
+			//打った地点に移動
+			transform_.position_ = respawnPos_;
+			timer = 0.0f;
+		}
+	}
+
+	if (isSandAreaHit_)
+	{
+		force_ *= 0.8f;
+	}
+
+	if (force_ <= 0.0f && isShoot_)
+	{
+		if (isOutAreaHit_)
+		{
+			transform_.position_ = respawnPos_;
+		}
+	}
+
+	//エリア判定リセット
+	{
+		isLakeAreaHit_ = false;
+		isSandAreaHit_ = false;
+		isOutAreaHit_ = false;
+	}
+
 
 #else//デバッグ用
 	XMVECTOR vMoveY = XMVectorSet(0, 0.4f, 0, 0);
@@ -295,7 +306,7 @@ void Player::Update()
 	
 	HitRayCast(hStageModel);
 
-# endif
+#endif
 
 	XMVECTOR vCam;
 	XMFLOAT3 camPos;
@@ -381,7 +392,7 @@ void Player::SetRange(int range)
 //	}
 //}
 
-void Player::HitRayCast(int hModel)
+void Player::RayCast(int hModel)
 {
 	RayCastData data;
 	Transform tModel;
@@ -399,6 +410,26 @@ void Player::HitRayCast(int hModel)
 			isFly_ = false;
 		}
 	}
+}
+
+bool Player::HitAreaRayCast(int hModel)
+{
+	RayCastData data;
+	Transform tModel;
+	float rayStartHeight = 20.0f;
+	data.start = transform_.position_;
+	data.start.y = rayStartHeight;
+	data.dir = XMFLOAT3(0, -1, 0);
+	Model::RayCast(hModel, &data);
+	if (data.hit)
+	{
+		tModel.position_.y = -data.dist + data.start.y;
+		if (transform_.position_.y <= tModel.position_.y)
+		{
+			return true;
+		}
+	}
+	return false;
 }
 
 void Player::Save()

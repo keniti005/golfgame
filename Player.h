@@ -38,7 +38,8 @@ public:
     
 private:
     void ChangeCamera();
-    void HitRayCast(int hModel);
+    void RayCast(int hModel);
+	bool HitAreaRayCast(int hModel);
 
     int hModel_;
     std::vector<float> powerRate_;
@@ -60,6 +61,7 @@ private:
     bool isTreeHit_;
 	bool isLakeAreaHit_;
 	bool isSandAreaHit_;
+    bool isOutAreaHit_;
     CAMERA camTargetNow_;
 };
 
