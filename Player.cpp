@@ -63,11 +63,11 @@ void Player::Update()
 	{
 		ChangeCamera();
 	}
-	if (Input::IsKey(DIK_D))
+	if (Input::IsKey(DIK_RIGHT))
 	{
 		transform_.rotate_.y += 1.2f;
 	}
-	if (Input::IsKey(DIK_A))
+	if (Input::IsKey(DIK_LEFT))
 	{
 		transform_.rotate_.y -= 1.2f;
 	}
@@ -126,7 +126,7 @@ void Player::Update()
 		if (Input::IsKeyDown(DIK_SPACE) && camTargetNow_ == PLAYER)
 		{
 			respawnPos_ = transform_.position_;//スポーン地点の設定
-			force_ = (velocity_.z * powerRate_[rangeNum_]) * mass_;//運動方程式
+			force_ = (velocity_.z * powerRate_[rangeNum_]) * mass_;
 			vy = velocity_.y * sinf(45.0f) + gravity_ * dt;//斜方投射
 			isShoot_ = true;
 			isFly_ = true;
@@ -175,8 +175,9 @@ void Player::Update()
 	{
 		//反発の計算
 		XMVECTOR normal = XMVectorSet(0.0f, 0.0f, 1.0f, 0.0f);
+		float res = 0.5f;//反発率
 		XMVector3Normalize(normal);
-		vMoveZ = vMoveZ - 1.5f * XMVector3Dot(vMoveZ, normal) * normal;
+		vMoveZ = vMoveZ - (1.0f + res) * XMVector3Dot(vMoveZ, normal) * normal;
 	}
 
 	vPos += vMoveZ;
@@ -377,21 +378,6 @@ void Player::SetRange(int range)
 	rangeNum_ = range - 1;
 }
 
-//void Player::HitRayCast(int hModel)
-//{
-//	RayCastData data;
-//	float rayStartHeight = 20.0f;
-//	data.start = transform_.position_;
-//	data.start.y = rayStartHeight;
-//	data.dir = XMFLOAT3(0, -1, 0);
-//	Model::RayCast(hModel, &data);
-//	if (data.hit)
-//	{
-//		transform_.position_.y = -data.dist + data.start.y;
-//		isFly_ = false;
-//	}
-//}
-
 void Player::RayCast(int hModel)
 {
 	RayCastData data;
@@ -455,6 +441,7 @@ void Player::ChangeCamera()
 		break;
 	case STAGESENTER:
 		camTargetNow_ = PLAYER;
+		break;
 	default:
 		camTargetNow_ = PLAYER;
 		break;

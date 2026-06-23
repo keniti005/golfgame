@@ -3,7 +3,6 @@
 #include "Goal.h"
 #include "GolfClub.h"
 #include "Engine/Image.h"
-#include "Engine/Input.h"
 #include "Engine/Global.h"
 
 UI::UI(GameObject* parent)
@@ -125,23 +124,25 @@ void UI::Draw()
 		Image::Draw(hClubPict_[currentClub]);
 	}
 
-	//60秒で1分に更新
-	if (secondTimer_ > 60.0f)
+	if (!(pGoal->IsGoal()))
 	{
-		minuteTimer_ += 1.0f;
-		secondTimer_ = 0.0f;
+		//60秒で1分に更新
+		if (secondTimer_ > 60.0f)
+		{
+			minuteTimer_ += 1.0f;
+			secondTimer_ = 0.0f;
+		}
+		//pText_->Draw(50, 50, (std::to_string(secondTimer_)).c_str());//タイマー表示
+		if (secondTimer_ < 10.0f)
+		{
+			pText_->Draw(50, 50, ("Time:" + std::to_string((int)minuteTimer_) + ":0" + std::to_string((int)secondTimer_)).c_str());//タイマー表示
+		}
+		else
+		{
+			pText_->Draw(50, 50, ("Time:" + std::to_string((int)minuteTimer_) + ":" + std::to_string((int)secondTimer_)).c_str());//タイマー表示
+		}
+		pText_->Draw(50, 100, (turnText_ + std::to_string(pPlayer->GetTurns())).c_str());//ターン数表示
 	}
-	//pText_->Draw(50, 50, (std::to_string(secondTimer_)).c_str());//タイマー表示
-	if (secondTimer_ < 10.0f)
-	{
-		pText_->Draw(50, 50, (std::to_string((int)minuteTimer_) + ":0" + std::to_string((int)secondTimer_)).c_str());//タイマー表示
-	}
-	else
-	{
-		pText_->Draw(50, 50, (std::to_string((int)minuteTimer_) + ":" + std::to_string((int)secondTimer_)).c_str());//タイマー表示
-	}
-	pText_->Draw(50, 100, (turnText_ + std::to_string(pPlayer->GetTurns())).c_str());//ターン数表示
-
 	if (pPlayer->IsShoot())//矢印の位置を初期化
 	{
 		tArow.position_.y = tHitMeta.position_.y - 0.3f;
