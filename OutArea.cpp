@@ -16,7 +16,8 @@ void OutArea::Initialize()
 	transform_.scale_.y = 1.0f;
 	transform_.scale_.z = 1.0f;
 
-	hModel_ = Model::Load("outGround.fbx");
+	//hModel_ = Model::Load("outGround.fbx");
+	hModel_ = Model::Load("tyutrialOutGround.fbx");
 	assert(hModel_ >= 0);
 }
 

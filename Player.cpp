@@ -102,7 +102,7 @@ void Player::Update()
 		break;
 	}
 
-#if false
+#if true
 	if (!(isShoot_))
 	{
 		if (Input::IsKeyDown(DIK_SPACE) && camTargetNow_ == PLAYER && !(pushKeyRock))
@@ -184,8 +184,8 @@ void Player::Update()
 	XMStoreFloat3(&transform_.position_, vPos);
 
 	//エリア外のレイキャスト
-	OutArea* pOutArea = (OutArea*)FindObject("OutArea");    //ステージオブジェクトを探す
-	int hOutAreaModel = pOutArea->GetModelHandle();    //モデル番号を取得
+	OutArea* pOutArea = (OutArea*)FindObject("OutArea");//ステージオブジェクトを探す
+	int hOutAreaModel = pOutArea->GetModelHandle();//モデル番号を取得
 	RayCast(hOutAreaModel);
 
 	//ステージ上のレイキャスト
@@ -194,8 +194,8 @@ void Player::Update()
 	RayCast(hStageModel);
 
 	//ゴール地点のレイキャスト
-	Goal* pGoal = (Goal*)FindObject("Goal");    //ステージオブジェクトを探す
-	int hGoalModel = pGoal->GetModelHandle();    //モデル番号を取得
+	Goal* pGoal = (Goal*)FindObject("Goal");//ステージオブジェクトを探す
+	int hGoalModel = pGoal->GetModelHandle();//モデル番号を取得
 	RayCast(hGoalModel);
 
 	isOutAreaHit_ = HitAreaRayCast(hOutAreaModel);

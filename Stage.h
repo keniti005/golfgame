@@ -14,7 +14,8 @@ public:
     void Release() override;
     int GetModelHandle() const { return hModel_; }
 private:
-    //std::vector<int> hModels_;
+    std::vector<int> LoadStageObjectCsv_;
+    std::vector<int> hStageModels_;
     int hModel_;
 };
 
