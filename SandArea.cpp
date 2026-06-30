@@ -35,7 +35,6 @@ void SandArea::Draw()
 {
 	Model::SetTransform(hModel_, transform_);
 	Model::Draw(hModel_);
-	CollisionDraw();
 }
 
 void SandArea::Release()

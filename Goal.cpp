@@ -46,7 +46,6 @@ void Goal::Draw()
 	{
 		Model::SetTransform(hModels_[i], transform_);
 		Model::Draw(hModels_[i]);
-		CollisionDraw();
 	}
 }
 

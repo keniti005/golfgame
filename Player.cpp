@@ -174,10 +174,20 @@ void Player::Update()
 	if (isTreeHit_)
 	{
 		//”½”­‚ÌŒvŽZ
-		XMVECTOR normal = XMVectorSet(0.0f, 0.0f, 1.0f, 0.0f);
+		XMVECTOR vMoveXZ = XMVectorSet(vMoveZ.m128_f32[0], 0.0f, vMoveZ.m128_f32[2], 0.0f);
 		float res = 0.5f;//”½”­—¦
-		XMVector3Normalize(normal);
-		vMoveZ = vMoveZ - (1.0f + res) * XMVector3Dot(vMoveZ, normal) * normal;
+		// xŽ²•ûŒü‚Ì”½”­
+		XMVECTOR normalX = XMVectorSet(1.0f, 0.0f, 0.0f, 0.0f);
+		vMoveZ = vMoveZ - (1.0f + res) * XMVector3Dot(vMoveXZ, normalX) * normalX;
+		// zŽ²•ûŒü‚Ì”½”­
+		XMVECTOR normalZ = XMVectorSet(0.0f, 0.0f, 1.0f, 0.0f);
+		vMoveZ = vMoveZ - (1.0f + res) * XMVector3Dot(vMoveXZ, normalZ) * normalZ;
+
+		////”½”­‚ÌŒvŽZ
+		//XMVECTOR normal = XMVectorSet(0.0f, 0.0f, 1.0f, 0.0f);
+		//float res = 0.5f;//”½”­—¦
+		//XMVector3Normalize(normal);
+		//vMoveZ = vMoveZ - (1.0f + res) * XMVector3Dot(vMoveZ, normal) * normal;
 	}
 
 	vPos += vMoveZ;
@@ -206,7 +216,7 @@ void Player::Update()
 		vy = 0.0f;
 		static float timer = 0.0f;
 		timer += dt;
-		if (timer > 3.0f)
+		if (timer > 2.0f)
 		{
 			//‘Å‚Á‚½’n“_‚ÉˆÚ“®
 			transform_.position_ = respawnPos_;
@@ -345,7 +355,6 @@ void Player::Draw()
 	{
 		Model::Draw(hModel_);
 	}
-	CollisionDraw();
 }
 
 void Player::Release()
